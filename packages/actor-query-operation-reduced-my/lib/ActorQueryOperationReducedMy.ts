@@ -37,6 +37,7 @@ export class ActorQueryOperationReducedMy extends ActorQueryOperationTypedMediat
     const QueryEngine = require('@comunica/query-sparql').QueryEngine;
     const myEngine = new QueryEngine();
     const queue: [string, string[]][] = [[subject, []]];
+    this.pathPrint()
   
     while (queue.length > 0) {
       const [currentNode, path] = queue.shift()!;
@@ -44,8 +45,9 @@ export class ActorQueryOperationReducedMy extends ActorQueryOperationTypedMediat
   
       for (const neighborBinding of outgoingEdges) {
         const neighbor = neighborBinding.get('o')?.value || '';
-        const newPath = [...path, neighbor];
-        this.pathPrint(`Path: ${subject} -> ${newPath.join(' -> ')}`)
+        const edge = neighborBinding.get('p')?.value || '';
+        const newPath = [...path, edge, neighbor];
+        this.pathPrint(`Path: ${subject} -> ${newPath.join(' -> ')}`);
 
         if ( !this.isLiteral(neighbor) ) {
           queue.push([neighbor, newPath]);
@@ -55,19 +57,32 @@ export class ActorQueryOperationReducedMy extends ActorQueryOperationTypedMediat
     }
   }
 
-  private async query(sub: string, pred: string, source: string, myEngine: any ) {     
-    const bindingsStream = await myEngine.queryBindings(`
-      SELECT ?p ?o WHERE {
-        <${sub}> ?pred ?o.
-        VALUES ?pred { <${pred}> }
-        BIND(?pred AS ?p)
-      }`, {
+  private async query(sub: string, pred: string, source: string, myEngine: any ) { 
+    
+    switch (pred) {
+      case "p":
+        var q = `SELECT ?p ?o WHERE 
+        {
+          <${sub}> ?p ?o.
+        }`;
+        break;
+      default:
+        var q = `SELECT ?p ?o WHERE 
+        {
+          <${sub}> ?pred ?o.
+          VALUES ?pred { <${pred}> }
+          BIND(?pred AS ?p)
+        }`;
+    }
+
+    const bindingsStream = await myEngine.queryBindings(q, 
+      {
         // sources: ['http://example.org/'], 
         // baseIRI: 'http://example.org/',
         sources: [
           {
             type: 'serialized',
-            value: '@prefix : <http://example.org/> . :Alice :knows :Bob . :Bob :knows :David . :Eve :knows :David .  :Charlie :parentOf :Eve . :Bob :worksWith :Charlie .',
+            value: '@prefix : <http://example.org/> . :Alice :knows :Bob . :Bob :likes :David . :David :likes :Jane . :Eve :knows :David .  :Charlie :parentOf :Eve . :Bob :worksWith :Charlie .',
             mediaType: 'text/turtle',
             baseIRI: 'http://example.org/',
           },
@@ -79,9 +94,9 @@ export class ActorQueryOperationReducedMy extends ActorQueryOperationTypedMediat
     return bindingsStream.toArray();
   }
 
-  private pathPrint(s: string) {
+  private pathPrint(s?: string) {
     if(!s) {
-      console.log('')
+      console.log('PATHS:')
     } else {
       console.log(s)
     }
