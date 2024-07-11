@@ -7,7 +7,7 @@ import type { IActorTest } from '@comunica/core';
 import type { IActionContext, IQueryOperationResult } from '@comunica/types';
 import type * as RDF from '@rdfjs/types';
 import { DataFactory } from 'rdf-data-factory';
-import type { Algebra } from 'sparqlalgebrajs';
+import type { Algebra } from 'sparqlalgebrajs-nrt';
 
 const DF = new DataFactory();
 

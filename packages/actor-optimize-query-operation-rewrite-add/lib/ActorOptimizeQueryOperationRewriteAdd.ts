@@ -7,7 +7,7 @@ import { ActorOptimizeQueryOperation } from '@comunica/bus-optimize-query-operat
 import type { IActorTest } from '@comunica/core';
 import type * as RDF from '@rdfjs/types';
 import { DataFactory } from 'rdf-data-factory';
-import { Algebra, Util } from 'sparqlalgebrajs';
+import { Algebra, Util } from 'sparqlalgebrajs-nrt';
 
 const DF = new DataFactory<RDF.BaseQuad>();
 

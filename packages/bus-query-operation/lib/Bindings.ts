@@ -4,8 +4,8 @@ import type * as RDF from '@rdfjs/types';
 import { DataFactory } from 'rdf-data-factory';
 import { termToString } from 'rdf-string';
 import { mapTermsNested, someTermsNested } from 'rdf-terms';
-import type { Algebra, Factory } from 'sparqlalgebrajs';
-import { Util } from 'sparqlalgebrajs';
+import type { Algebra, Factory } from 'sparqlalgebrajs-nrt';
+import { Util } from 'sparqlalgebrajs-nrt';
 
 const DF = new DataFactory();
 

@@ -8,7 +8,7 @@ import {
 import type { IActorTest } from '@comunica/core';
 import { AsyncEvaluator, isExpressionError } from '@comunica/expression-evaluator';
 import type { Bindings, IActionContext, IQueryOperationResult } from '@comunica/types';
-import type { Algebra } from 'sparqlalgebrajs';
+import type { Algebra } from 'sparqlalgebrajs-nrt';
 
 /**
  * A comunica Filter Sparqlee Query Operation Actor.

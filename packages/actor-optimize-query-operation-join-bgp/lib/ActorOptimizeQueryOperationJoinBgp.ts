@@ -4,8 +4,8 @@ import type {
 } from '@comunica/bus-optimize-query-operation';
 import { ActorOptimizeQueryOperation } from '@comunica/bus-optimize-query-operation';
 import type { IActorTest } from '@comunica/core';
-import type { Algebra, Factory } from 'sparqlalgebrajs';
-import { Util } from 'sparqlalgebrajs';
+import type { Algebra, Factory } from 'sparqlalgebrajs-nrt';
+import { Util } from 'sparqlalgebrajs-nrt';
 
 /**
  * A comunica Join BGP Optimize Query Operation Actor.

@@ -12,7 +12,7 @@ import type {
   IQueryOperationResult,
   IQueryOperationResultBindings,
 } from '@comunica/types';
-import type { Algebra } from 'sparqlalgebrajs';
+import type { Algebra } from 'sparqlalgebrajs-nrt';
 
 /**
  * A comunica Distinct Hash Query Operation Actor.

@@ -10,7 +10,7 @@ import type {
   IQueryOperationResultBindings,
 } from '@comunica/types';
 import { LRUCache } from 'lru-cache';
-import type { Algebra } from 'sparqlalgebrajs';
+import type { Algebra } from 'sparqlalgebrajs-nrt';
 
 /**
  * A comunica Reduced Hash Query Operation Actor.

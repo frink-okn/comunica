@@ -6,7 +6,7 @@ import type * as RDF from '@rdfjs/types';
 import arrayifyStream from 'arrayify-stream';
 import { ArrayIterator, BufferedIterator } from 'asynciterator';
 import { DataFactory } from 'rdf-data-factory';
-import { Factory } from 'sparqlalgebrajs';
+import { Factory } from 'sparqlalgebrajs-nrt';
 import { PathVariableObjectIterator } from '../lib';
 
 const DF = new DataFactory();

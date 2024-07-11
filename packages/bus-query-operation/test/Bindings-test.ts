@@ -1,6 +1,6 @@
 import { BindingsFactory } from '@comunica/bindings-factory';
 import { DataFactory } from 'rdf-data-factory';
-import { Factory } from 'sparqlalgebrajs';
+import { Factory } from 'sparqlalgebrajs-nrt';
 import { materializeOperation, materializeTerm } from '..';
 
 const DF = new DataFactory();

@@ -9,7 +9,7 @@ import type {
 import type * as RDF from '@rdfjs/types';
 import type { AsyncIterator } from 'asynciterator';
 import { ArrayIterator } from 'asynciterator';
-import type { Algebra } from 'sparqlalgebrajs';
+import type { Algebra } from 'sparqlalgebrajs-nrt';
 import { deskolemizeOperation, skolemizeBindingsStream, skolemizeQuadStream } from './utils';
 
 /**

@@ -1,8 +1,8 @@
 import { BindingsFactory } from '@comunica/bindings-factory';
 import type * as RDF from '@rdfjs/types';
 import { termToString } from 'rdf-string';
-import type { Algebra as Alg } from 'sparqlalgebrajs';
-import { translate } from 'sparqlalgebrajs';
+import type { Algebra as Alg } from 'sparqlalgebrajs-nrt';
+import { translate } from 'sparqlalgebrajs-nrt';
 import { AsyncEvaluator, SyncEvaluator } from '../../lib';
 import type { IAsyncEvaluatorContext, AsyncExtensionFunctionCreator } from '../../lib/evaluators/AsyncEvaluator';
 import type { ISyncEvaluatorContext, SyncExtensionFunctionCreator } from '../../lib/evaluators/SyncEvaluator';

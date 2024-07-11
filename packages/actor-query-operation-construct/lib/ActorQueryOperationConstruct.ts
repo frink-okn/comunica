@@ -13,7 +13,7 @@ import type {
 import type * as RDF from '@rdfjs/types';
 import type { AsyncIterator } from 'asynciterator';
 import { getTermsNested, getVariables, uniqTerms } from 'rdf-terms';
-import { Algebra } from 'sparqlalgebrajs';
+import { Algebra } from 'sparqlalgebrajs-nrt';
 import { BindingsToQuadsIterator } from './BindingsToQuadsIterator';
 
 /**

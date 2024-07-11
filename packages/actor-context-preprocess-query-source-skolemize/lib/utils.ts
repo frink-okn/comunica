@@ -10,7 +10,7 @@ import type * as RDF from '@rdfjs/types';
 import type { AsyncIterator } from 'asynciterator';
 import { DataFactory } from 'rdf-data-factory';
 import { mapTermsNested } from 'rdf-terms';
-import { Algebra, Util } from 'sparqlalgebrajs';
+import { Algebra, Util } from 'sparqlalgebrajs-nrt';
 
 const DF = new DataFactory();
 

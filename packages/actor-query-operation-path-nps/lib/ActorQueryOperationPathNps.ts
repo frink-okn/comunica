@@ -4,7 +4,7 @@ import {
   ActorQueryOperation,
 } from '@comunica/bus-query-operation';
 import type { IActionContext, IQueryOperationResult } from '@comunica/types';
-import { Algebra } from 'sparqlalgebrajs';
+import { Algebra } from 'sparqlalgebrajs-nrt';
 
 /**
  * A comunica Path Nps Query Operation Actor.

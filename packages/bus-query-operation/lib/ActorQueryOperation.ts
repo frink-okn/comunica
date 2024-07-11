@@ -16,7 +16,7 @@ import type {
   FragmentSelectorShape,
 } from '@comunica/types';
 import type * as RDF from '@rdfjs/types';
-import type { Algebra } from 'sparqlalgebrajs';
+import type { Algebra } from 'sparqlalgebrajs-nrt';
 import { materializeOperation } from './Bindings';
 
 /**

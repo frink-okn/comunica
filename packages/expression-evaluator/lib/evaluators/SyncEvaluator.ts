@@ -1,6 +1,6 @@
 import type * as RDF from '@rdfjs/types';
 import { LRUCache } from 'lru-cache';
-import type { Algebra as Alg } from 'sparqlalgebrajs';
+import type { Algebra as Alg } from 'sparqlalgebrajs-nrt';
 import type * as E from '../expressions/Expressions';
 import { AlgebraTransformer } from '../transformers/AlgebraTransformer';
 import type { IExpressionEvaluator } from '../Types';
