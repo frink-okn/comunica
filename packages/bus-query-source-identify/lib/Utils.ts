@@ -16,7 +16,7 @@ import {
   uniqTerms,
 } from 'rdf-terms';
 import { matchPatternMappings } from 'rdf-terms/lib/QuadTermUtil';
-import type { Algebra } from 'sparqlalgebrajs';
+import type { Algebra } from 'sparqlalgebrajs-nrt';
 
 const DF = new DataFactory();
 

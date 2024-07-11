@@ -4,7 +4,7 @@ import type * as RDF from '@rdfjs/types';
 import type { AsyncIterator } from 'asynciterator';
 import { ArrayIterator } from 'asynciterator';
 import { DataFactory } from 'rdf-data-factory';
-import { Factory } from 'sparqlalgebrajs';
+import { Factory } from 'sparqlalgebrajs-nrt';
 import {
   filterMatchingQuotedQuads,
   getDuplicateElementLinks,

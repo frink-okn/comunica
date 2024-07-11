@@ -8,7 +8,7 @@ import { ActionContext, Bus } from '@comunica/core';
 import { MetadataValidationState } from '@comunica/metadata';
 import { ArrayIterator } from 'asynciterator';
 import { DataFactory } from 'rdf-data-factory';
-import { Algebra, Factory } from 'sparqlalgebrajs';
+import { Algebra, Factory } from 'sparqlalgebrajs-nrt';
 import { ActorQueryOperationPathAlt } from '../lib/ActorQueryOperationPathAlt';
 import '@comunica/jest';
 

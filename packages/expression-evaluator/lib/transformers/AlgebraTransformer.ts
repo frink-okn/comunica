@@ -1,4 +1,4 @@
-import { Algebra as Alg } from 'sparqlalgebrajs';
+import { Algebra as Alg } from 'sparqlalgebrajs-nrt';
 import type { AsyncExtensionFunction, AsyncExtensionFunctionCreator } from '../evaluators/AsyncEvaluator';
 import type { ICompleteSharedContext } from '../evaluators/evaluatorHelpers/BaseExpressionEvaluator';
 import type { SyncExtensionFunction, SyncExtensionFunctionCreator } from '../evaluators/SyncEvaluator';

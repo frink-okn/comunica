@@ -8,7 +8,7 @@ import type {
   IQueryOperationResult,
   IQuerySourceWrapper,
 } from '@comunica/types';
-import { Algebra, Util } from 'sparqlalgebrajs';
+import { Algebra } from 'sparqlalgebrajs-nrt';
 
 /**
  * A comunica Source Query Operation Actor.

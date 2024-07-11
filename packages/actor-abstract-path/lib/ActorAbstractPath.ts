@@ -23,7 +23,7 @@ import {
 } from 'asynciterator';
 import { DataFactory } from 'rdf-data-factory';
 import { termToString } from 'rdf-string';
-import { Algebra, Factory } from 'sparqlalgebrajs';
+import { Algebra, Factory } from 'sparqlalgebrajs-nrt';
 import { PathVariableObjectIterator } from './PathVariableObjectIterator';
 
 const DF = new DataFactory();
