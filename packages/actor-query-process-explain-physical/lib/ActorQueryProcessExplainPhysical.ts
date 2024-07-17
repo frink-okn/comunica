@@ -47,6 +47,9 @@ export class ActorQueryProcessExplainPhysical extends ActorQueryProcess {
       case 'bindings':
         await output.bindingsStream.toArray();
         break;
+      case 'paths':
+        await output.pathsStream.toArray();
+        break;
       case 'quads':
         await output.quadStream.toArray();
         break;

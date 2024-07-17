@@ -16,6 +16,7 @@ import type {
   IQueryBindingsOptions,
   IQuerySource,
   MetadataBindings,
+  PathsStream,
 } from '@comunica/types';
 import type * as RDF from '@rdfjs/types';
 import type { AsyncIterator } from 'asynciterator';
@@ -113,6 +114,13 @@ export class QuerySourceHypermedia implements IQuerySource {
     }
 
     return it;
+  }
+
+  public queryPaths(operation: Algebra.Operation, context: IActionContext): PathsStream {
+    return new TransformIterator(async() => {
+      const source = await this.getSourceCached({ url: this.firstUrl }, {}, context, this.getAggregateStore(context));
+      return source.source.queryPaths(operation, context);
+    });
   }
 
   public queryQuads(operation: Algebra.Operation, context: IActionContext): AsyncIterator<RDF.Quad> {

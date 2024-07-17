@@ -1,6 +1,7 @@
 import { MetadataValidationState } from '@comunica/metadata';
 import type {
   BindingsStream,
+  PathsStream,
   FragmentSelectorShape,
   IActionContext,
   IQueryBindingsOptions,
@@ -51,6 +52,26 @@ export class QuerySourceSkolemized implements IQuerySource {
       return it;
     }
     return skolemizeBindingsStream(this.innerSource.queryBindings(operationMapped, context, options), this.sourceId);
+  }
+
+  // TODO
+  public queryPaths(
+    operation: Algebra.Operation,
+    context: IActionContext,
+  ): PathsStream {
+    const operationMapped = deskolemizeOperation(operation, this.sourceId);
+    if (!operationMapped) {
+      const it: PathsStream = new ArrayIterator<RDF.Paths>([], { autoStart: false });
+      // it.setProperty('metadata', {
+      //   state: new MetadataValidationState(),
+      //   cardinality: { type: 'exact', value: 0 },
+      //   canContainUndefs: false,
+      //   variables: [],
+      // });
+      return it;
+    }
+    // return skolemizePathsStream(this.innerSource.queryPaths(operationMapped, context), this.sourceId);
+    return this.innerSource.queryPaths(operationMapped, context);
   }
 
   public queryBoolean(operation: Algebra.Ask, context: IActionContext): Promise<boolean> {

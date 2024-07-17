@@ -59,6 +59,10 @@ export class QuerySourceAddSourceAttribution implements IQuerySource {
     return ret;
   }
 
+  public queryPaths(operation: Algebra.Operation, context: IActionContext): AsyncIterator<RDF.Paths> {
+    return this.innerSource.queryPaths(operation, context);
+  }
+
   public queryBoolean(operation: Algebra.Ask, context: IActionContext): Promise<boolean> {
     return this.innerSource.queryBoolean(operation, context);
   }
