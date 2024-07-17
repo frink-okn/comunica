@@ -1,8 +1,10 @@
 import type * as RDF from '@rdfjs/types';
 import type { AsyncIterator } from 'asynciterator';
 import type { BindingsStream } from './Bindings';
+import type { PathsStream } from './Paths'
 import type { IActionContext } from './IActionContext';
 import type { IMetadata, MetadataQuads, MetadataBindings } from './IMetadata';
+import { IActorRdfUpdateHypermediaPatchSparqlUpdateArgs } from '../../actor-rdf-update-hypermedia-patch-sparql-update/lib';
 
 export interface IQueryOperationResultBase {
   /**
@@ -57,6 +59,21 @@ export interface IQueryOperationResultBindings extends IQueryOperationResultStre
 }
 
 /**
+ * Query operation output for a paths stream.
+ * For example: SPARQL PATHS results
+ */
+export interface IQueryOperationResultPaths extends IQueryOperationResultBase {
+  /**
+   * The type of output.
+   */
+  type: 'paths';
+  /**
+   * The stream of paths resulting from the given operation.
+   */
+  pathsStream: PathsStream;
+}
+
+/**
  * Query operation output for quads.
  * For example: SPARQL CONSTRUCT results
  */
@@ -107,6 +124,7 @@ export interface IQueryOperationResultVoid extends IQueryOperationResultBase {
  */
 export type IQueryOperationResult =
   IQueryOperationResultBindings |
+  IQueryOperationResultPaths |
   IQueryOperationResultQuads |
   IQueryOperationResultBoolean |
   IQueryOperationResultVoid;
@@ -121,6 +139,15 @@ export interface IQueryBindingsEnhanced extends QueryBindings {
 }
 
 /**
+ * Enhanced query operation output for a bindings stream.
+ * For example: SPARQL PATHS results
+ */
+export interface IQueryPathsEnhanced extends QueryPaths {
+  // Override with more specific return type
+  execute: () => Promise<PathsStream>;
+}
+
+/**
  * Enhanced query operation output for quads.
  * For example: SPARQL CONSTRUCT results
  */
@@ -131,6 +158,7 @@ export interface IQueryQuadsEnhanced extends QueryQuads {
 }
 
 export type QueryBindings = RDF.QueryBindings<RDF.AllMetadataSupport>;
+export type QueryPaths = RDF.QueryPaths;
 export type QueryQuads = RDF.QueryQuads<RDF.AllMetadataSupport>;
 
 /**
@@ -139,6 +167,7 @@ export type QueryQuads = RDF.QueryQuads<RDF.AllMetadataSupport>;
  */
 export type QueryEnhanced =
   IQueryBindingsEnhanced |
+  IQueryPathsEnhanced |
   IQueryQuadsEnhanced |
   RDF.QueryBoolean |
   RDF.QueryVoid;
@@ -146,7 +175,7 @@ export type QueryEnhanced =
 /**
  * Different manners in which a query can be explained.
  */
-export type QueryExplainMode = 'parsed' | 'logical' | 'physical' | 'physical-json';
+export type QueryExplainMode = 'parsed' | 'logical' | 'physical';
 
 /**
  * An interface marking an explained query.
