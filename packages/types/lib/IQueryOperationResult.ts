@@ -4,7 +4,7 @@ import type { BindingsStream } from './Bindings';
 import type { PathsStream } from './Paths'
 import type { IActionContext } from './IActionContext';
 import type { IMetadata, MetadataQuads, MetadataBindings } from './IMetadata';
-import { IActorRdfUpdateHypermediaPatchSparqlUpdateArgs } from '../../actor-rdf-update-hypermedia-patch-sparql-update/lib';
+// import { IActorRdfUpdateHypermediaPatchSparqlUpdateArgs } from '../../actor-rdf-update-hypermedia-patch-sparql-update/lib';
 
 export interface IQueryOperationResultBase {
   /**
