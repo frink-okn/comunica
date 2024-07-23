@@ -10,8 +10,7 @@
       {
         "@id": "urn:comunica:default:query-operation/actors#paths",
         "@type": "ActorQueryOperationPaths",
-        "mediatorQueryOperation": { "@id": "urn:comunica:default:query-operation/mediators#main" },
-        "mediatorMergeBindingsContext": { "@id": "urn:comunica:default:merge-bindings-context/mediators#main" }
+        "mediatorQueryOperation": { "@id": "urn:comunica:default:query-operation/mediators#main" }
       }
     ]
   }
