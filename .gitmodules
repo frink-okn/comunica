@@ -1,0 +1,3 @@
+[submodule "rdfjs_types"]
+	path = rdfjs_types
+	url = https://github.com/frink-okn/rdfjs-types.git
