@@ -61,7 +61,7 @@ export class QuerySourceSkolemized implements IQuerySource {
   ): PathsStream {
     const operationMapped = deskolemizeOperation(operation, this.sourceId);
     if (!operationMapped) {
-      const it: PathsStream = new ArrayIterator<RDF.Paths>([], { autoStart: false });
+      const it: PathsStream = new ArrayIterator<RDF.Path>([], { autoStart: false });
       // it.setProperty('metadata', {
       //   state: new MetadataValidationState(),
       //   cardinality: { type: 'exact', value: 0 },

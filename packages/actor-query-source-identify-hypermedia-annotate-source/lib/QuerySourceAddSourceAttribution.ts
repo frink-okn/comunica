@@ -59,7 +59,7 @@ export class QuerySourceAddSourceAttribution implements IQuerySource {
     return ret;
   }
 
-  public queryPaths(operation: Algebra.Operation, context: IActionContext): AsyncIterator<RDF.Paths> {
+  public queryPaths(operation: Algebra.Operation, context: IActionContext): AsyncIterator<RDF.Path> {
     return this.innerSource.queryPaths(operation, context);
   }
 

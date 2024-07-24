@@ -141,7 +141,7 @@ export class QuerySourceRdfJs implements IQuerySource {
   public queryPaths(
     _operation: Algebra.Operation,
     _context: IActionContext,
-  ): AsyncIterator<RDF.Paths> {
+  ): AsyncIterator<RDF.Path> {
     throw new Error('queryPaths is not implemented in QuerySourceQpf');
   }
 
