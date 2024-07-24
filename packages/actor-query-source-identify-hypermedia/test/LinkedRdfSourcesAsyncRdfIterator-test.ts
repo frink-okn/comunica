@@ -9,8 +9,8 @@ import type { IActionContext, IQueryBindingsOptions, MetadataBindings } from '@c
 import type * as RDF from '@rdfjs/types';
 import { ArrayIterator, wrap } from 'asynciterator';
 import { DataFactory } from 'rdf-data-factory';
-import type { Algebra } from 'sparqlalgebrajs';
-import { Factory } from 'sparqlalgebrajs';
+import type { Algebra } from 'sparqlalgebrajs-nrt';
+import { Factory } from 'sparqlalgebrajs-nrt';
 import type { ISourceState, SourceStateGetter } from '../lib/LinkedRdfSourcesAsyncRdfIterator';
 import { LinkedRdfSourcesAsyncRdfIterator } from '../lib/LinkedRdfSourcesAsyncRdfIterator';
 import '@comunica/jest';

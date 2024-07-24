@@ -5,7 +5,7 @@ import type { IQueryOperationResultBindings } from '@comunica/types';
 import arrayifyStream from 'arrayify-stream';
 import { ArrayIterator } from 'asynciterator';
 import { DataFactory } from 'rdf-data-factory';
-import { Algebra } from 'sparqlalgebrajs';
+import { Algebra } from 'sparqlalgebrajs-nrt';
 import { ActorQueryOperationFromQuad } from '../lib/ActorQueryOperationFromQuad';
 
 const quad = require('rdf-quad');

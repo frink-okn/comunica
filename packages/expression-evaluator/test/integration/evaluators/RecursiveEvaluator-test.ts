@@ -2,7 +2,7 @@ import { BindingsFactory } from '@comunica/bindings-factory';
 import { LRUCache } from 'lru-cache';
 import { DataFactory } from 'rdf-data-factory';
 import { expressionTypes, types } from 'sparqlalgebrajs/lib/algebra';
-import { Wildcard } from 'sparqljs';
+import { Wildcard } from 'sparqljs-nrt';
 import { AsyncRecursiveEvaluator } from '../../../lib/evaluators/evaluatorHelpers/AsyncRecursiveEvaluator';
 import { SyncRecursiveEvaluator } from '../../../lib/evaluators/evaluatorHelpers/SyncRecursiveEvaluator';
 import { ExpressionType } from '../../../lib/expressions';

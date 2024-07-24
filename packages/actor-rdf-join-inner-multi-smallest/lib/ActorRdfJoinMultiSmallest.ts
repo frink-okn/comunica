@@ -11,7 +11,7 @@ import { ActorRdfJoin } from '@comunica/bus-rdf-join';
 import type { MediatorRdfJoinEntriesSort } from '@comunica/bus-rdf-join-entries-sort';
 import type { IMediatorTypeJoinCoefficients } from '@comunica/mediatortype-join-coefficients';
 import type { MetadataBindings, IJoinEntry, IActionContext, IJoinEntryWithMetadata } from '@comunica/types';
-import { Factory } from 'sparqlalgebrajs';
+import { Factory } from 'sparqlalgebrajs-nrt';
 
 /**
  * A Multi Smallest RDF Join Actor.

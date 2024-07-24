@@ -1,4 +1,4 @@
-import type { Algebra as Alg } from 'sparqlalgebrajs';
+import type { Algebra as Alg } from 'sparqlalgebrajs-nrt';
 
 import type { ExistenceExpression } from './Expressions';
 import { ExpressionType } from './Expressions';

@@ -1,7 +1,7 @@
 import type * as RDF from '@rdfjs/types';
 import * as RDFString from 'rdf-string';
-import type { Algebra as Alg } from 'sparqlalgebrajs';
-import { Algebra } from 'sparqlalgebrajs';
+import type { Algebra as Alg } from 'sparqlalgebrajs-nrt';
+import { Algebra } from 'sparqlalgebrajs-nrt';
 import * as E from '../expressions';
 import { TypeURL } from '../util/Consts';
 import * as Err from '../util/Errors';

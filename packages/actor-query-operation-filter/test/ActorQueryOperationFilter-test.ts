@@ -7,8 +7,8 @@ import { isExpressionError } from '@comunica/expression-evaluator';
 import type { IQueryOperationResultBindings, Bindings } from '@comunica/types';
 import { ArrayIterator } from 'asynciterator';
 import { DataFactory } from 'rdf-data-factory';
-import type { Algebra } from 'sparqlalgebrajs';
-import { Factory, translate } from 'sparqlalgebrajs';
+import type { Algebra } from 'sparqlalgebrajs-nrt';
+import { Factory, translate } from 'sparqlalgebrajs-nrt';
 import { ActorQueryOperationFilter } from '../lib';
 import '@comunica/jest';
 

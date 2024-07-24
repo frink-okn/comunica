@@ -1,6 +1,6 @@
 import { BindingsFactory } from '@comunica/bindings-factory';
 import { DataFactory } from 'rdf-data-factory';
-import { translate } from 'sparqlalgebrajs';
+import { translate } from 'sparqlalgebrajs-nrt';
 import { AsyncEvaluator, SyncEvaluator } from '../../../lib';
 import { IntegerLiteral } from '../../../lib/expressions';
 import { TypeURL as DT } from '../../../lib/util/Consts';

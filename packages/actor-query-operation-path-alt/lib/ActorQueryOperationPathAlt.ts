@@ -10,7 +10,7 @@ import type {
   MetadataBindings,
 } from '@comunica/types';
 import { UnionIterator } from 'asynciterator';
-import { Algebra } from 'sparqlalgebrajs';
+import { Algebra } from 'sparqlalgebrajs-nrt';
 
 /**
  * A comunica Path Alt Query Operation Actor.

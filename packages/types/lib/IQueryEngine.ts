@@ -1,6 +1,6 @@
 import type * as RDF from '@rdfjs/types';
 import type { AsyncIterator } from 'asynciterator';
-import type { Algebra } from 'sparqlalgebrajs';
+import type { Algebra } from 'sparqlalgebrajs-nrt';
 import type { BindingsStream } from './Bindings';
 import type { PathsStream } from './Paths';
 import type { IActionContext } from './IActionContext';
