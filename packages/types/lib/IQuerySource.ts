@@ -2,7 +2,7 @@ import type * as RDF from '@rdfjs/types';
 import type { AsyncIterator } from 'asynciterator';
 import type { Algebra } from 'sparqlalgebrajs-nrt';
 import type { BindingsStream } from './Bindings';
-import type { PathsStream } from './Paths';
+import type { PathStream } from './Paths';
 import type { IActionContext } from './IActionContext';
 import type { MetadataBindings } from './IMetadata';
 
@@ -100,7 +100,7 @@ export interface IQuerySource {
   queryPaths: (
     operation: Algebra.Operation,
     context: IActionContext,
-  ) => PathsStream;
+  ) => PathStream;
 
   /**
    * Returns a (possibly lazy) stream that returns all quads matching the operation.

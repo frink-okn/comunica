@@ -8,7 +8,7 @@ import { KeysQueryOperation } from '@comunica/context-entries';
 import type {
   IQuerySource,
   BindingsStream,
-  PathsStream,
+  PathStream,
   IActionContext,
   FragmentSelectorShape,
   IQueryBindingsOptions,
@@ -426,7 +426,7 @@ export class QuerySourceQpf implements IQuerySource {
   public queryPaths(
     operation: Algebra.Operation,
     context: IActionContext,
-  ): PathsStream {
+  ): PathStream {
     throw new Error('queryPaths is not implemented in QuerySourceQpf');
   }
 

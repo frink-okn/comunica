@@ -33,6 +33,7 @@
   ],
   "dependencies": {
     "@comunica/core": "^3.1.0",
+    "@comunica/path-factory": "^1.0.0",
     "@comunica/bus-query-operation": "^3.1.2"
   },
   "scripts": {

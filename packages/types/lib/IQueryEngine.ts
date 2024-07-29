@@ -2,7 +2,7 @@ import type * as RDF from '@rdfjs/types';
 import type { AsyncIterator } from 'asynciterator';
 import type { Algebra } from 'sparqlalgebrajs-nrt';
 import type { BindingsStream } from './Bindings';
-import type { PathsStream } from './Paths';
+import type { PathStream } from './Paths';
 import type { IActionContext } from './IActionContext';
 import type { QueryAlgebraContext, QueryStringContext } from './IQueryContext';
 import type { IQueryExplained, QueryEnhanced, QueryExplainMode } from './IQueryOperationResult';
@@ -42,7 +42,7 @@ export interface IQueryEngine<
   queryPaths: <QueryFormatTypeInner extends QueryFormatType>(
     query: QueryFormatTypeInner,
     context?: QueryFormatTypeInner extends string ? QueryStringContextInner : QueryAlgebraContextInner,
-  ) => Promise<PathsStream>;
+  ) => Promise<PathStream>;
 
   /**
    * Query the quad results of a CONSTRUCT or DESCRIBE query.

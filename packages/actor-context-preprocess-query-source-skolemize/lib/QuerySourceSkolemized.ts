@@ -1,7 +1,7 @@
 import { MetadataValidationState } from '@comunica/metadata';
 import type {
   BindingsStream,
-  PathsStream,
+  PathStream,
   FragmentSelectorShape,
   IActionContext,
   IQueryBindingsOptions,
@@ -58,10 +58,10 @@ export class QuerySourceSkolemized implements IQuerySource {
   public queryPaths(
     operation: Algebra.Operation,
     context: IActionContext,
-  ): PathsStream {
+  ): PathStream {
     const operationMapped = deskolemizeOperation(operation, this.sourceId);
     if (!operationMapped) {
-      const it: PathsStream = new ArrayIterator<RDF.Path>([], { autoStart: false });
+      const it: PathStream = new ArrayIterator<RDF.Path>([], { autoStart: false });
       // it.setProperty('metadata', {
       //   state: new MetadataValidationState(),
       //   cardinality: { type: 'exact', value: 0 },

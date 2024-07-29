@@ -10,7 +10,7 @@ import type {
   QueryType,
   QueryExplainMode,
   BindingsStream,
-  PathsStream,
+  PathStream,
   QueryAlgebraContext,
   QueryStringContext,
   IQueryBindingsEnhanced,
@@ -49,7 +49,7 @@ implements IQueryEngine<QueryStringContextInner, QueryAlgebraContextInner> {
   public async queryPaths<QueryFormatTypeInner extends QueryFormatType>(
     query: QueryFormatTypeInner,
     context?: QueryFormatTypeInner extends string ? QueryStringContextInner : QueryAlgebraContextInner,
-  ): Promise<PathsStream> {
+  ): Promise<PathStream> {
     return this.queryOfType<QueryFormatTypeInner, IQueryPathsEnhanced>(query, context, 'paths');
   }
 
@@ -224,7 +224,7 @@ implements IQueryEngine<QueryStringContextInner, QueryAlgebraContextInner> {
       case 'paths':
         return {
           resultType: 'paths',
-          execute: async() => internalResult.pathsStream,
+          execute: async() => internalResult.pathStream,
           context: internalResult.context,
         };
       case 'quads':
@@ -264,7 +264,7 @@ implements IQueryEngine<QueryStringContextInner, QueryAlgebraContextInner> {
       case 'paths':
         return {
           type: 'paths',
-          pathsStream: <PathsStream> await finalResult.execute(),
+          pathStream: <PathStream> await finalResult.execute(),
           // metadata: async() => <any> await finalResult.metadata(),
         };
       case 'quads':

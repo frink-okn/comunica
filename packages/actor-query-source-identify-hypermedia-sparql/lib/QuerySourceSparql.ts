@@ -4,7 +4,7 @@ import { KeysInitQuery } from '@comunica/context-entries';
 import type {
   IQuerySource,
   BindingsStream,
-  PathsStream,
+  PathStream,
   IActionContext,
   FragmentSelectorShape,
   Bindings,
@@ -131,11 +131,11 @@ export class QuerySourceSparql implements IQuerySource {
   public queryPaths(
     operationIn: Algebra.Operation,
     context: IActionContext,
-  ): PathsStream {
+  ): PathStream {
     // If bindings are passed, modify the operations
     let operationPromise: Promise<Algebra.Operation> = Promise.resolve(operationIn);
 
-    const paths: PathsStream = new TransformIterator(async() => {
+    const paths: PathStream = new TransformIterator(async() => {
       // Prepare queries
       const operation = await operationPromise;
       const variables: RDF.Variable[] = Util.inScopeVariables(operation);
