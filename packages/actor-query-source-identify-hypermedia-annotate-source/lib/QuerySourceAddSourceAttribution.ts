@@ -7,6 +7,7 @@ import type {
   IQueryBindingsOptions,
   IQuerySource,
   MetadataBindings,
+  PathStream,
 } from '@comunica/types';
 import type * as RDF from '@rdfjs/types';
 import type { AsyncIterator } from 'asynciterator';
@@ -59,7 +60,7 @@ export class QuerySourceAddSourceAttribution implements IQuerySource {
     return ret;
   }
 
-  public queryPaths(operation: Algebra.Operation, context: IActionContext): AsyncIterator<RDF.Path> {
+  public queryPaths(operation: Algebra.Operation, context: IActionContext): Promise<PathStream> {
     return this.innerSource.queryPaths(operation, context);
   }
 

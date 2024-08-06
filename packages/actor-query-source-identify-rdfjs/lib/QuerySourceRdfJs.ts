@@ -2,7 +2,7 @@ import type { BindingsFactory } from '@comunica/bindings-factory';
 import { filterMatchingQuotedQuads, quadsToBindings } from '@comunica/bus-query-source-identify';
 import { KeysQueryOperation } from '@comunica/context-entries';
 import { MetadataValidationState } from '@comunica/metadata';
-import type { IQuerySource, BindingsStream, IActionContext, FragmentSelectorShape } from '@comunica/types';
+import type { IQuerySource, BindingsStream, PathStream, IActionContext, FragmentSelectorShape } from '@comunica/types';
 import type * as RDF from '@rdfjs/types';
 import { AsyncIterator, wrap as wrapAsyncIterator } from 'asynciterator';
 import { DataFactory } from 'rdf-data-factory';
@@ -141,7 +141,7 @@ export class QuerySourceRdfJs implements IQuerySource {
   public queryPaths(
     _operation: Algebra.Operation,
     _context: IActionContext,
-  ): AsyncIterator<RDF.Path> {
+  ): Promise<PathStream> {
     throw new Error('queryPaths is not implemented in QuerySourceQpf');
   }
 

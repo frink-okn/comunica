@@ -183,6 +183,9 @@ implements IQueryEngine<QueryStringContextInner, QueryAlgebraContextInner> {
         case 'bindings':
           mediaType = 'application/json';
           break;
+        case 'paths':
+          mediaType = 'application/json';
+          break;
         case 'quads':
           mediaType = 'application/trig';
           break;

@@ -1,24 +1,55 @@
 import * as RDF from '@rdfjs/types';
+import { ActorQueryOperation } from '@comunica/bus-query-operation';
+import { Algebra, Factory, translate } from 'sparqlalgebrajs-nrt';
+import { QuerySourceSkolemized } from '@comunica/actor-context-preprocess-query-source-skolemize';
+import { IActionContext, IActionContextKey } from '@comunica/types'
 
-export function pathPrint(s?: RDF.Term, path?: RDF.Term[]) {
-  if(s && path) {
-    var output = `Path: ${path[0].value}`;
-    for( const node of path.slice(1)) {
-      output += ` -> ${node.value}`;
+
+export class Utils {
+
+  private F: Factory;
+  private mediatorQueryOperation: any;
+  private context: IActionContext;
+  private sources: Array<{ context: unknown; source: QuerySourceSkolemized }>;
+
+  public constructor( mediatorQueryOperation: any, context: IActionContext, F?: Factory) {
+    this.F = F || new Factory();
+    this.mediatorQueryOperation = mediatorQueryOperation;
+    this.context = context;
+
+    // Parse all sources:
+    let key: IActionContextKey<unknown> = {
+      name: '@comunica/bus-query-operation:querySources'
     }
-    console.log(output);
+    try {
+      this.sources = context.get(key) as Array<{ context: unknown; source: QuerySourceSkolemized }>;
+    } catch {
+      // Cannot run queries without sources.
+      throw new Error("Error parsing sources in Query Operation Paths Actor.");
+    }
+  }
 
-  } else {
-    console.log('Error parsing path to print.')
+  public async query(sub: RDF.Term, pred: RDF.Term ) {
+    
+    if (pred.termType == 'Variable') {
+      var q = `SELECT * WHERE {VALUES ?s { <${sub.value}> } ?s ?p ?o .}`;
+    } else {
+      q = `SELECT * WHERE {VALUES ?s { <${sub.value}> } VALUES ?p { <${pred.value}> } ?s ?p ?o .}`;
+    }
+    
+    var unions: Algebra.Operation[] = [];
+    for (const source of this.sources) {
+      const project = translate(q);
+      project.input.input.at(-1).patterns[0].metadata = {
+        scopedSource: source
+      };
+      unions.push(project);
+    }
+    const query = this.F.createUnion(unions);
+    
+    var outgoingEdges = ActorQueryOperation.getSafeBindings(
+      await this.mediatorQueryOperation.mediate({ operation: query, context: this.context })) || [];
+  
+    return outgoingEdges.bindingsStream.toArray();
   }
 }
-
-  // private pathBindings(s: RDF.Term, path: RDF.Term[]): Bindings[] {
-    
-  //   const bindingsArr: [RDF.Variable, RDF.Term][] = [];
-  //   bindingsArr.push([this.DF.variable('start'), s])
-  //   path.forEach((node, index) => {
-  //     bindingsArr.push([this.DF.variable(`var${index + 1}`), node]);
-  //   });
-  //   return [this.BF.bindings(bindingsArr)];
-  // }

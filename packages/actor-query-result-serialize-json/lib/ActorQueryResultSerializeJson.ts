@@ -8,6 +8,7 @@ import type {
   IActionContext,
   IQueryOperationResultBindings,
   IQueryOperationResultBoolean,
+  IQueryOperationResultPaths,
   IQueryOperationResultQuads,
 } from '@comunica/types';
 import { wrap } from 'asynciterator';
@@ -32,8 +33,8 @@ export class ActorQueryResultSerializeJson extends ActorQueryResultSerializeFixe
   }
 
   public override async testHandleChecked(action: IActionSparqlSerialize, _context: IActionContext): Promise<boolean> {
-    if (![ 'bindings', 'quads', 'boolean' ].includes(action.type)) {
-      throw new Error('This actor can only handle bindings or quad streams.');
+    if (![ 'bindings', 'paths', 'quads', 'boolean' ].includes(action.type)) {
+      throw new Error('This actor can only handle bindings, path, or quad streams.');
     }
     return true;
   }
@@ -61,6 +62,23 @@ export class ActorQueryResultSerializeJson extends ActorQueryResultSerializeFixe
       }).prepend([ '[' ]).append([ '\n]\n' ]);
 
       data.wrap(<any> stream);
+    } else if (action.type === 'paths' ) {
+
+      ((<IQueryOperationResultPaths> action).pathStream).forEach(path => {
+        data.push(`\n[\n`)
+        path.nodes().forEach(bs => {
+          var str = `[ `;
+          bs.forEach(b => {
+            str += `${b.value}, `
+          })
+          str += ']\n';
+          data.push(str);
+        })
+        data.push(`]\n`)
+      });
+
+      data.push(null);
+
     } else {
       try {
         data.push(`${JSON.stringify(await (<IQueryOperationResultBoolean> action).execute())}\n`);

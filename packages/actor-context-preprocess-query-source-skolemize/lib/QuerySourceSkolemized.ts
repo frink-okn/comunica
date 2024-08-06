@@ -58,20 +58,21 @@ export class QuerySourceSkolemized implements IQuerySource {
   public queryPaths(
     operation: Algebra.Operation,
     context: IActionContext,
-  ): PathStream {
-    const operationMapped = deskolemizeOperation(operation, this.sourceId);
-    if (!operationMapped) {
-      const it: PathStream = new ArrayIterator<RDF.Path>([], { autoStart: false });
-      // it.setProperty('metadata', {
-      //   state: new MetadataValidationState(),
-      //   cardinality: { type: 'exact', value: 0 },
-      //   canContainUndefs: false,
-      //   variables: [],
-      // });
-      return it;
-    }
+  ): Promise<PathStream> {
+    // const operationMapped = deskolemizeOperation(operation, this.sourceId);
+    // if (!operationMapped) {
+    //   const it: PathStream = new Array<RDF.Path>();
+    //   it.setProperty('metadata', {
+    //     state: new MetadataValidationState(),
+    //     cardinality: { type: 'exact', value: 0 },
+    //     canContainUndefs: false,
+    //     variables: [],
+    //   });
+    //   return it;
+    // }
     // return skolemizePathsStream(this.innerSource.queryPaths(operationMapped, context), this.sourceId);
-    return this.innerSource.queryPaths(operationMapped, context);
+    // return this.innerSource.queryPaths(operationMapped, context);
+    return this.innerSource.queryPaths(operation, context);
   }
 
   public queryBoolean(operation: Algebra.Ask, context: IActionContext): Promise<boolean> {

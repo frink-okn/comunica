@@ -26,9 +26,7 @@ export class Path implements RDF.Path {
   }
 
   public forEach(fn: (value: Bindings) => any): void {
-    // for (const [ key, value ] of this.entries.entries()) {
-    //   fn(value, this.dataFactory.variable!(value));
-    // }
+    // TODO
   }
 
   public [Symbol.iterator](): Iterator<Bindings> {

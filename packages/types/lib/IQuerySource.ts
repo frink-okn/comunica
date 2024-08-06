@@ -100,7 +100,7 @@ export interface IQuerySource {
   queryPaths: (
     operation: Algebra.Operation,
     context: IActionContext,
-  ) => PathStream;
+  ) => Promise<PathStream>;
 
   /**
    * Returns a (possibly lazy) stream that returns all quads matching the operation.

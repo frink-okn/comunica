@@ -128,24 +128,28 @@ export class QuerySourceSparql implements IQuerySource {
     return bindings;
   }
 
-  public queryPaths(
-    operationIn: Algebra.Operation,
-    context: IActionContext,
-  ): PathStream {
-    // If bindings are passed, modify the operations
-    let operationPromise: Promise<Algebra.Operation> = Promise.resolve(operationIn);
+  // TODO
+  public queryPaths(operation: Algebra.Operation, context: IActionContext): Promise<PathStream> {
+    // let operationPromise: Promise<Algebra.Operation> = Promise.resolve(operationIn);
 
-    const paths: PathStream = new TransformIterator(async() => {
-      // Prepare queries
-      const operation = await operationPromise;
-      const variables: RDF.Variable[] = Util.inScopeVariables(operation);
-      const selectQuery: string = QuerySourceSparql.operationToSelectQuery(operation, variables);
+    // const paths: PathStream = new TransformIterator(async() => {
+    //   // Prepare queries
+    //   const operation = await operationPromise;
+    //   const variables: RDF.Variable[] = Util.inScopeVariables(operation);
+    //   const selectQuery: string = QuerySourceSparql.operationToSelectQuery(operation, variables);
 
-      return this.queryBindingsRemote(this.url, selectQuery, variables, context);
-    }, { autoStart: false });
-    this.attachMetadata(paths, context, operationPromise);
+    //   return this.queryBindingsRemote(this.url, selectQuery, variables, context);
+    // }, { autoStart: false });
+    // this.attachMetadata(paths, context, operationPromise);
 
-    return paths;
+    this.lastSourceContext = this.context.merge(context);
+    const promise = this.endpointFetcher.fetchPaths(
+      this.url,
+      context.get(KeysInitQuery.queryString) ?? QuerySourceSparql.operationToQuery(operation),
+    );
+    this.lastSourceContext = undefined;
+
+    return promise;
   }
 
   public queryQuads(operation: Algebra.Operation, context: IActionContext): AsyncIterator<RDF.Quad> {
