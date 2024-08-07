@@ -1,5 +1,5 @@
 import type * as RDF from '@rdfjs/types';
-import type { ArrayIterator } from 'asynciterator';
+import type { AsyncIterator } from 'asynciterator';
 
 /**
  * An immutable solution mapping object.
@@ -11,4 +11,4 @@ export type Path = RDF.Path;
  * A stream of paths.
  * @see Path
  */
-export type PathStream = ArrayIterator<Path> & RDF.ResultStream<Path> | Array<Path>;
+export type PathStream = AsyncIterator<Path> & RDF.ResultStream<Path>;

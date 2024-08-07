@@ -116,11 +116,12 @@ export class QuerySourceHypermedia implements IQuerySource {
     return it;
   }
 
-  public async queryPaths(operation: Algebra.Operation, context: IActionContext): Promise<PathStream> {
-    // return new TransformIterator(async() => {
+  // TODO
+  public queryPaths(operation: Algebra.Operation, context: IActionContext): PathStream {
+    return new TransformIterator(async() => {
       const source = await this.getSourceCached({ url: this.firstUrl }, {}, context, this.getAggregateStore(context));
-      return await source.source.queryPaths(operation, context);
-    // });
+      return source.source.queryPaths(operation, context);
+    });
   }
 
   public queryQuads(operation: Algebra.Operation, context: IActionContext): AsyncIterator<RDF.Quad> {

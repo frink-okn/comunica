@@ -23,9 +23,6 @@ export class ActorQueryOperationPaths extends ActorQueryOperationTypedMediated<A
     var start = _operation.start;
     var end = _operation.end;
 
-    // let penis: AsyncIterator<String> = new ArrayIterator<String>(["dsf"], {autoStart: false});
-    // console.log(penis.read());
-
     // No paths between two of the same nodes.
     if (start.equals(end)) return false;
 

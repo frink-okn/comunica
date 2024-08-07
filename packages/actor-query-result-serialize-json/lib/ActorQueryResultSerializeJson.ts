@@ -63,10 +63,11 @@ export class ActorQueryResultSerializeJson extends ActorQueryResultSerializeFixe
 
       data.wrap(<any> stream);
     } else if (action.type === 'paths' ) {
-
-      ((<IQueryOperationResultPaths> action).pathStream).forEach(path => {
+      let stream = (<IQueryOperationResultPaths> action).pathStream;
+      let paths;
+      while (paths = stream.read()) {
         data.push(`\n[\n`)
-        path.nodes().forEach(bs => {
+        paths.nodes().forEach(bs => {
           var str = `[ `;
           bs.forEach(b => {
             str += `${b.value}, `
@@ -75,7 +76,7 @@ export class ActorQueryResultSerializeJson extends ActorQueryResultSerializeFixe
           data.push(str);
         })
         data.push(`]\n`)
-      });
+      }
 
       data.push(null);
 

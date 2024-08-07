@@ -426,7 +426,7 @@ export class QuerySourceQpf implements IQuerySource {
   public queryPaths(
     _operation: Algebra.Operation,
     _context: IActionContext,
-  ): Promise<PathStream> {
+  ): PathStream {
     throw new Error('queryPaths is not implemented in QuerySourceQpf');
   }
 

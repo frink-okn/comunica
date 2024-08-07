@@ -82,25 +82,15 @@ export interface IQuerySource {
   /**
    * Returns a (possibly lazy) stream that returns all bindings matching the operation.
    *
-   * Passed operations MUST conform to the query shape exposed by the selector type returned from `getSelectorShape`.
-   * The given operation represents a Linked Data Fragments selector.
-   *
-   * The returned stream MUST expose the property 'metadata' of type `MetadataBindings`.
-   * The implementor is reponsible for handling cases where 'metadata'
-   * is being called without the stream being in flow-mode.
-   * This metadata object can become invalidated (see `metadata.state`),
-   * in which case the 'metadata' property must and will be updated.
-   *
    * @param {Algebra.Operation} operation The query operation to execute.
    * @param {IActionContext} context      The query context.
-   * @param {BindingsStream} options      Options for querying bindings
-   * @return {AsyncIterator<RDF.Quad>} The resulting bindings stream.
+   * @return {AsyncIterator<RDF.Path>} The resulting path stream.
    *
    */
   queryPaths: (
     operation: Algebra.Operation,
     context: IActionContext,
-  ) => Promise<PathStream>;
+  ) => PathStream;
 
   /**
    * Returns a (possibly lazy) stream that returns all quads matching the operation.

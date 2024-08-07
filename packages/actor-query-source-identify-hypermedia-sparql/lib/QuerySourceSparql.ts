@@ -129,7 +129,7 @@ export class QuerySourceSparql implements IQuerySource {
   }
 
   // TODO
-  public queryPaths(operation: Algebra.Operation, context: IActionContext): Promise<PathStream> {
+  public queryPaths(_operation: Algebra.Operation, _context: IActionContext): PathStream {
     // let operationPromise: Promise<Algebra.Operation> = Promise.resolve(operationIn);
 
     // const paths: PathStream = new TransformIterator(async() => {
@@ -142,14 +142,13 @@ export class QuerySourceSparql implements IQuerySource {
     // }, { autoStart: false });
     // this.attachMetadata(paths, context, operationPromise);
 
-    this.lastSourceContext = this.context.merge(context);
-    const promise = this.endpointFetcher.fetchPaths(
-      this.url,
-      context.get(KeysInitQuery.queryString) ?? QuerySourceSparql.operationToQuery(operation),
-    );
-    this.lastSourceContext = undefined;
-
-    return promise;
+    // this.lastSourceContext = this.context.merge(context);
+    // const promise = this.endpointFetcher.fetchPaths(
+    //   this.url,
+    //   context.get(KeysInitQuery.queryString) ?? QuerySourceSparql.operationToQuery(operation),
+    // );
+    // this.lastSourceContext = undefined;
+    throw new Error("Paths have not been implemented to query sparql sources yet.")
   }
 
   public queryQuads(operation: Algebra.Operation, context: IActionContext): AsyncIterator<RDF.Quad> {

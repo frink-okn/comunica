@@ -60,7 +60,7 @@ export class QuerySourceAddSourceAttribution implements IQuerySource {
     return ret;
   }
 
-  public queryPaths(operation: Algebra.Operation, context: IActionContext): Promise<PathStream> {
+  public queryPaths(operation: Algebra.Operation, context: IActionContext): PathStream {
     return this.innerSource.queryPaths(operation, context);
   }
 
