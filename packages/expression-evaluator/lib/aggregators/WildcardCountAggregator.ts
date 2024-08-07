@@ -1,6 +1,6 @@
 import type * as RDF from '@rdfjs/types';
 import * as RdfString from 'rdf-string';
-import type { Algebra } from 'sparqlalgebrajs';
+import type { Algebra } from 'sparqlalgebrajs-nrt';
 import { integer } from '../functions/Helpers';
 
 /**

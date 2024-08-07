@@ -16,13 +16,14 @@ import type {
   IQueryBindingsOptions,
   IQuerySource,
   MetadataBindings,
+  PathStream,
 } from '@comunica/types';
 import type * as RDF from '@rdfjs/types';
 import type { AsyncIterator } from 'asynciterator';
 import { TransformIterator } from 'asynciterator';
 import { LRUCache } from 'lru-cache';
 import { Readable } from 'readable-stream';
-import type { Algebra } from 'sparqlalgebrajs';
+import type { Algebra } from 'sparqlalgebrajs-nrt';
 import type { ISourceState } from './LinkedRdfSourcesAsyncRdfIterator';
 import { MediatedLinkedRdfSourcesAsyncRdfIterator } from './MediatedLinkedRdfSourcesAsyncRdfIterator';
 import { StreamingStoreMetadata } from './StreamingStoreMetadata';
@@ -113,6 +114,14 @@ export class QuerySourceHypermedia implements IQuerySource {
     }
 
     return it;
+  }
+
+  // TODO
+  public queryPaths(operation: Algebra.Operation, context: IActionContext): PathStream {
+    return new TransformIterator(async() => {
+      const source = await this.getSourceCached({ url: this.firstUrl }, {}, context, this.getAggregateStore(context));
+      return source.source.queryPaths(operation, context);
+    });
   }
 
   public queryQuads(operation: Algebra.Operation, context: IActionContext): AsyncIterator<RDF.Quad> {

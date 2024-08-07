@@ -8,8 +8,8 @@ import type { IActorTest } from '@comunica/core';
 import type { IActionContext } from '@comunica/types';
 import type * as RDF from '@rdfjs/types';
 import { uniqTerms } from 'rdf-terms';
-import type { Factory } from 'sparqlalgebrajs';
-import { Algebra, Util } from 'sparqlalgebrajs';
+import type { Factory } from 'sparqlalgebrajs-nrt';
+import { Algebra, Util } from 'sparqlalgebrajs-nrt';
 
 /**
  * A comunica Filter Pushdown Optimize Query Operation Actor.
@@ -203,6 +203,15 @@ export class ActorOptimizeQueryOperationFilterPushdown extends ActorOptimizeQuer
           return factory.createFilter(operation, expression);
         }
         return operation;
+      case Algebra.types.PATHS:
+        return factory.createPaths(
+          operation.start,
+        operation.via,
+        operation.end,
+        operation.shortest,
+        operation.cyclic,
+        operation.maxlength
+        );
       case Algebra.types.LEFT_JOIN:
       case Algebra.types.MINUS:
       case Algebra.types.ALT:

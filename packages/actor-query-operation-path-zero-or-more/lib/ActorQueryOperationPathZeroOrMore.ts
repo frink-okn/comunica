@@ -7,7 +7,7 @@ import type { Bindings, IQueryOperationResult, IActionContext } from '@comunica/
 import type * as RDF from '@rdfjs/types';
 import { MultiTransformIterator, TransformIterator, EmptyIterator, BufferedIterator } from 'asynciterator';
 import { termToString } from 'rdf-string';
-import { Algebra } from 'sparqlalgebrajs';
+import { Algebra } from 'sparqlalgebrajs-nrt';
 
 /**
  * A comunica Path ZeroOrMore Query Operation Actor.

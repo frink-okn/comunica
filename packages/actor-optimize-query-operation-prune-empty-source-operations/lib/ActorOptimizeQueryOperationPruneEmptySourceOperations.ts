@@ -9,7 +9,7 @@ import { KeysQuerySourceIdentify } from '@comunica/context-entries';
 import type { IActorTest } from '@comunica/core';
 import type { IActionContext, IQuerySourceWrapper, MetadataBindings } from '@comunica/types';
 import { DataFactory } from 'rdf-data-factory';
-import { Algebra, Factory, Util } from 'sparqlalgebrajs';
+import { Algebra, Factory, Util } from 'sparqlalgebrajs-nrt';
 
 const AF = new Factory();
 const DF = new DataFactory();
@@ -80,7 +80,6 @@ export class ActorOptimizeQueryOperationPruneEmptySourceOperations extends Actor
           return self.mapMultiOperation(subOperation, emptyOperations, children => factory.createAlt(children));
         },
       });
-
       // Identify and remove projections that have become empty now due to missing variables
       operation = Util.mapOperation(operation, {
         [Algebra.types.PROJECT](subOperation, factory) {

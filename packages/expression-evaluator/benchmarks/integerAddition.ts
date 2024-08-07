@@ -12,7 +12,7 @@ import { Suite } from 'benchmark';
 // eslint-disable-next-line ts/no-require-imports
 import Benchmark = require('benchmark');
 import { DataFactory } from 'rdf-data-factory';
-import { translate } from 'sparqlalgebrajs';
+import { translate } from 'sparqlalgebrajs-nrt';
 import { SyncEvaluator } from '../lib';
 import { TypeURL } from '../lib/util/Consts';
 import { template } from '../test/util/Aliases';

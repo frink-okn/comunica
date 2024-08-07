@@ -8,7 +8,7 @@ import arrayifyStream from 'arrayify-stream';
 import { Store } from 'n3';
 import { DataFactory } from 'rdf-data-factory';
 import { RdfStore } from 'rdf-stores';
-import { Factory } from 'sparqlalgebrajs';
+import { Factory } from 'sparqlalgebrajs-nrt';
 import { QuerySourceRdfJs } from '../lib';
 import '@comunica/jest';
 

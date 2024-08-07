@@ -9,7 +9,7 @@ import type { IQuerySourceWrapper, IActionContext } from '@comunica/types';
 import type * as RDF from '@rdfjs/types';
 import { ArrayIterator, AsyncIterator } from 'asynciterator';
 import { DataFactory } from 'rdf-data-factory';
-import { Algebra, Factory } from 'sparqlalgebrajs';
+import { Algebra, Factory } from 'sparqlalgebrajs-nrt';
 import { ActorRdfJoinMultiBindSource } from '../lib/ActorRdfJoinMultiBindSource';
 import '@comunica/jest';
 

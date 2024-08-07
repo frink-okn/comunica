@@ -7,8 +7,8 @@ import { ActionContext } from '@comunica/core';
 import type { IActionContext, IQuerySource } from '@comunica/types';
 import { setTaskScheduler } from 'asynciterator';
 import { DataFactory } from 'rdf-data-factory';
-import type { Algebra } from 'sparqlalgebrajs';
-import { Factory } from 'sparqlalgebrajs';
+import type { Algebra } from 'sparqlalgebrajs-nrt';
+import { Factory } from 'sparqlalgebrajs-nrt';
 import type { ISourceState, SourceStateGetter } from '../lib/LinkedRdfSourcesAsyncRdfIterator';
 import { MediatedLinkedRdfSourcesAsyncRdfIterator } from '../lib/MediatedLinkedRdfSourcesAsyncRdfIterator';
 

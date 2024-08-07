@@ -8,6 +8,7 @@ import { KeysQueryOperation } from '@comunica/context-entries';
 import type {
   IQuerySource,
   BindingsStream,
+  PathStream,
   IActionContext,
   FragmentSelectorShape,
   IQueryBindingsOptions,
@@ -24,8 +25,8 @@ import {
   mapTerms,
   matchPattern,
 } from 'rdf-terms';
-import type { Algebra } from 'sparqlalgebrajs';
-import { Factory } from 'sparqlalgebrajs';
+import type { Algebra } from 'sparqlalgebrajs-nrt';
+import { Factory } from 'sparqlalgebrajs-nrt';
 
 const AF = new Factory();
 const DF = new DataFactory<RDF.BaseQuad>();
@@ -420,6 +421,13 @@ export class QuerySourceQpf implements IQuerySource {
     if (quads) {
       return quads.clone();
     }
+  }
+
+  public queryPaths(
+    _operation: Algebra.Operation,
+    _context: IActionContext,
+  ): PathStream {
+    throw new Error('queryPaths is not implemented in QuerySourceQpf');
   }
 
   public queryQuads(

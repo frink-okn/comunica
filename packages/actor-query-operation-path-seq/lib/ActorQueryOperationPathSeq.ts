@@ -6,7 +6,7 @@ import {
 import type { MediatorRdfJoin } from '@comunica/bus-rdf-join';
 import type { Bindings, IActionContext, IQueryOperationResult, IJoinEntry } from '@comunica/types';
 import type * as RDF from '@rdfjs/types';
-import { Algebra } from 'sparqlalgebrajs';
+import { Algebra } from 'sparqlalgebrajs-nrt';
 
 /**
  * A comunica Path Seq Query Operation Actor.

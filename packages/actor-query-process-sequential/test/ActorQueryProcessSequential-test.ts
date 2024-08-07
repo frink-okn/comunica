@@ -7,8 +7,8 @@ import { KeysInitQuery } from '@comunica/context-entries';
 import { ActionContext, Bus } from '@comunica/core';
 import type { IActionContext } from '@comunica/types';
 import { DataFactory } from 'rdf-data-factory';
-import type { Algebra } from 'sparqlalgebrajs';
-import { Factory } from 'sparqlalgebrajs';
+import type { Algebra } from 'sparqlalgebrajs-nrt';
+import { Factory } from 'sparqlalgebrajs-nrt';
 import { ActorQueryProcessSequential } from '../lib/ActorQueryProcessSequential';
 
 const DF = new DataFactory();

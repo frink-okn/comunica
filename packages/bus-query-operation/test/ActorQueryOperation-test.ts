@@ -4,7 +4,7 @@ import { ActionContext, Bus } from '@comunica/core';
 import { cachifyMetadata, MetadataValidationState } from '@comunica/metadata';
 import type { FunctionArgumentsCache } from '@comunica/types';
 import { ArrayIterator } from 'asynciterator';
-import { Algebra, Factory } from 'sparqlalgebrajs';
+import { Algebra, Factory } from 'sparqlalgebrajs-nrt';
 import { ActorQueryOperation } from '..';
 
 const BF = new BindingsFactory();

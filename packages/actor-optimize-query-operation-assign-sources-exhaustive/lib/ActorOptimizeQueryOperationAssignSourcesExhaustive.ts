@@ -9,7 +9,7 @@ import { getDataDestinationValue } from '@comunica/bus-rdf-update-quads';
 import { KeysInitQuery, KeysQueryOperation, KeysRdfUpdateQuads } from '@comunica/context-entries';
 import type { IActorTest } from '@comunica/core';
 import type { IDataDestination, IQuerySourceWrapper } from '@comunica/types';
-import { Algebra, Util } from 'sparqlalgebrajs';
+import { Algebra, Util } from 'sparqlalgebrajs-nrt';
 
 /**
  * A comunica Assign Sources Exhaustive Optimize Query Operation Actor.

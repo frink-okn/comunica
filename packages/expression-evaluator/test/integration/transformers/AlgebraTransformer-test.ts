@@ -1,6 +1,6 @@
 import { DataFactory } from 'rdf-data-factory';
 import { expressionTypes, types } from 'sparqlalgebrajs/lib/algebra';
-import { Wildcard } from 'sparqljs';
+import { Wildcard } from 'sparqljs-nrt';
 import * as E from '../../../lib/expressions';
 import { AlgebraTransformer } from '../../../lib/transformers/AlgebraTransformer';
 import * as Err from '../../../lib/util/Errors';

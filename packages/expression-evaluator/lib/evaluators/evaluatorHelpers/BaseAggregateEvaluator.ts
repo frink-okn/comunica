@@ -1,5 +1,5 @@
 import type * as RDF from '@rdfjs/types';
-import { Algebra } from 'sparqlalgebrajs';
+import { Algebra } from 'sparqlalgebrajs-nrt';
 import { aggregators } from '../../aggregators';
 import { Aggregator } from '../../aggregators/Aggregator';
 import { WildcardCountAggregator } from '../../aggregators/WildcardCountAggregator';

@@ -3,7 +3,7 @@ import { ActorQueryOperationTypedMediated } from '@comunica/bus-query-operation'
 import type { IActorTest } from '@comunica/core';
 import type { IActionContext, IQueryOperationResult } from '@comunica/types';
 import type * as RDF from '@rdfjs/types';
-import { Algebra, Factory } from 'sparqlalgebrajs';
+import { Algebra, Factory } from 'sparqlalgebrajs-nrt';
 
 /**
  * A comunica From Query Operation Actor.

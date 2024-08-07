@@ -22,7 +22,7 @@ import type { IQuerySource } from '@comunica/types';
 import { wrap } from 'asynciterator';
 import 'jest-rdf';
 import { DataFactory } from 'rdf-data-factory';
-import { Factory } from 'sparqlalgebrajs';
+import { Factory } from 'sparqlalgebrajs-nrt';
 
 const quad = require('rdf-quad');
 const streamifyArray = require('streamify-array');

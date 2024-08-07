@@ -1,7 +1,7 @@
 import { ActorQueryOperation } from '@comunica/bus-query-operation';
 import type { IQuerySource } from '@comunica/types';
 import { DataFactory } from 'rdf-data-factory';
-import { Factory } from 'sparqlalgebrajs';
+import { Factory } from 'sparqlalgebrajs-nrt';
 import { MemoryPhysicalQueryPlanLogger } from '../lib/MemoryPhysicalQueryPlanLogger';
 
 const factory = new Factory();
