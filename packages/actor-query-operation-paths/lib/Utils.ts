@@ -7,13 +7,13 @@ import { IActionContext, IActionContextKey } from '@comunica/types'
 
 export class Utils {
 
-  private F: Factory;
+  private Factory: Factory;
   private mediatorQueryOperation: any;
   private context: IActionContext;
   private sources: Array<{ context: unknown; source: QuerySourceSkolemized }>;
 
   public constructor( mediatorQueryOperation: any, context: IActionContext, F?: Factory) {
-    this.F = F || new Factory();
+    this.Factory = F || new Factory();
     this.mediatorQueryOperation = mediatorQueryOperation;
     this.context = context;
 
@@ -29,9 +29,9 @@ export class Utils {
     }
   }
 
-  public async query(sub: RDF.Term, pred: RDF.Term ) {
+  public async query(sub: RDF.Term, pred: RDF.Term): Promise<RDF.Bindings[]> {
     
-    if (pred.termType == 'Variable') {
+    if (pred.termType == 'Variable' || pred.value == '?p') {
       var q = `SELECT * WHERE {VALUES ?s { <${sub.value}> } ?s ?p ?o .}`;
     } else {
       q = `SELECT * WHERE {VALUES ?s { <${sub.value}> } VALUES ?p { <${pred.value}> } ?s ?p ?o .}`;
@@ -45,7 +45,7 @@ export class Utils {
       };
       unions.push(project);
     }
-    const query = this.F.createUnion(unions);
+    const query = this.Factory.createUnion(unions);
     
     var outgoingEdges = ActorQueryOperation.getSafeBindings(
       await this.mediatorQueryOperation.mediate({ operation: query, context: this.context })) || [];

@@ -1,14 +1,13 @@
 import { ActorQueryOperationTypedMediated, IActorQueryOperationTypedMediatedArgs } from '@comunica/bus-query-operation';
 import { IActorTest } from '@comunica/core';
-import type { IActionContext, IActionContextKey, IQueryOperationResultPaths } from '@comunica/types';
+import type { IActionContext, IQueryOperationResultPaths } from '@comunica/types';
+import { ArrayIterator, AsyncIterator } from 'asynciterator';
 import { Path } from '@comunica/path-factory';
 import { Algebra } from 'sparqlalgebrajs-nrt';
+import {Utils} from "./Utils"
+import * as RDF from '@rdfjs/types';
 // import { DataFactory } from 'rdf-data-factory';
 // import { Parser as SparqlParser, Generator as SparqlGenerator } from 'sparqljs'
-import * as RDF from '@rdfjs/types';
-import { QuerySourceSkolemized } from '@comunica/actor-context-preprocess-query-source-skolemize';
-// import { AsyncIterator, ArrayIterator } from 'asynciterator';
-import {Utils} from "./Utils"
 
 /**
  * A [Query Operation](https://github.com/comunica/comunica/tree/master/packages/bus-query-operation) actor that handles SPARQL paths operations.
@@ -24,6 +23,9 @@ export class ActorQueryOperationPaths extends ActorQueryOperationTypedMediated<A
     var start = _operation.start;
     var end = _operation.end;
 
+    // let penis: AsyncIterator<String> = new ArrayIterator<String>(["dsf"], {autoStart: false});
+    // console.log(penis.read());
+
     // No paths between two of the same nodes.
     if (start.equals(end)) return false;
 
@@ -33,16 +35,17 @@ export class ActorQueryOperationPaths extends ActorQueryOperationTypedMediated<A
   public async runOperation(operation: Algebra.Paths, context: IActionContext):
   Promise<IQueryOperationResultPaths> {
 
-    // Retrieve operation inputs:
     var start = operation.start;
     var via = operation.via;
     var end = operation.end;
 
     // Run paths algorithm depending on type of query (cyclic or shortest/all paths?).
     var utils = new Utils(this.mediatorQueryOperation, context); 
-    let output = operation.cyclic === true ?
+    let stream = operation.cyclic === true ?
       (await this.cyclicPaths(start, via, end, utils)) :
       (await this.paths(start, via, end, operation, utils));
+
+    const output: AsyncIterator<RDF.Path> = new ArrayIterator<RDF.Path>(stream, {autoStart: false});
         
     return {
       type: 'paths',
@@ -50,7 +53,8 @@ export class ActorQueryOperationPaths extends ActorQueryOperationTypedMediated<A
     };
   }
 
-  private async paths(start: RDF.Term, via: RDF.Term, end: RDF.Term, operation: Algebra.Operation, utils: Utils): Promise<RDF.Path[]> {
+  private async paths(start: RDF.Term, via: RDF.Term, end: RDF.Term, operation: Algebra.Operation, utils: Utils)
+  : Promise<RDF.Path[]> {
 
     // Initialize data structures
     const traversed = new Set<RDF.Term>();
@@ -93,11 +97,11 @@ export class ActorQueryOperationPaths extends ActorQueryOperationTypedMediated<A
     return pathsArr;
   }
 
-  private async cyclicPaths(start: RDF.Term, via: RDF.Term, end: RDF.Term, utils: Utils)
+  private async cyclicPaths(startNode: RDF.Term, via: RDF.Term, endNode: RDF.Term, utils: Utils)
   : Promise<RDF.Path[]> {
 
     // Initialize data structures
-    const traversed = new Set<RDF.Term>();
+    const traversed = new Set<String>();
     const pathArr: RDF.Bindings[] = [];
     var pathsArr: RDF.Path[] = [];
   
@@ -106,10 +110,10 @@ export class ActorQueryOperationPaths extends ActorQueryOperationTypedMediated<A
       neighborBinding && pathArr.push(neighborBinding);
     
       // If the current node has already been traversed.
-      if (traversed.has(node)) {
-        // If there is an end node specified and the current node is the end node,
+      if (traversed.has(node.value)) {
+        // If there is an end node specified and the current node is the end node OR if end node doesnt matter,
         // push a copy of pathArr to the pathsArr.
-        if (end && node.equals(end)) {
+        if ((end && node.equals(end)) || !end) {
           pathsArr.push(new Path(pathArr.slice()));
         }
         // Remove the last element from pathArr since we are backtracking.
@@ -118,7 +122,7 @@ export class ActorQueryOperationPaths extends ActorQueryOperationTypedMediated<A
       }
     
       // Mark the current node as traversed.
-      traversed.add(node);  
+      traversed.add(node.value);  
     
       try {
         // Query for all outgoing edges from the current node.
@@ -140,14 +144,14 @@ export class ActorQueryOperationPaths extends ActorQueryOperationTypedMediated<A
         // Remove the last element from pathArr since we are backtracking.
         pathArr.pop();
         // Remove the current node from traversed set to allow revisiting it in different paths.
-        traversed.delete(node);
+        traversed.delete(node.value);
       }
     }
     
   
-    if ( start.termType == 'NamedNode' && end.termType == 'NamedNode' ) {
+    if ( startNode.termType == 'NamedNode' && endNode.termType == 'NamedNode' ) {
       // If start node is specified, only search from that node
-      await dfs(start, end);
+      await dfs(startNode);
       return pathsArr;
     } else {
       // // Otherwise, search from all nodes
