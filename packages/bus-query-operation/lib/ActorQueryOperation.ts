@@ -7,6 +7,7 @@ import type {
   IQueryOperationResult,
   IQueryOperationResultBindings,
   IQueryOperationResultBoolean,
+  IQueryOperationResultPaths,
   IQueryOperationResultQuads,
   IQueryOperationResultVoid,
   Bindings,
@@ -55,6 +56,17 @@ export abstract class ActorQueryOperation extends Actor<IActionQueryOperation, I
   public static getSafeBindings(output: IQueryOperationResult): IQueryOperationResultBindings {
     ActorQueryOperation.validateQueryOutput(output, 'bindings');
     return <IQueryOperationResultBindings> output;
+  }
+
+  /**
+   * Safely cast a query operation output to a paths output.
+   * This will throw a runtime error if the output is of the incorrect type.
+   * @param {IQueryOperationResult} output A query operation output.
+   * @return {IQueryOperationResultPaths} A paths query operation output.
+   */
+  public static getSafePaths(output: IQueryOperationResult): IQueryOperationResultPaths {
+    ActorQueryOperation.validateQueryOutput(output, 'paths');
+    return <IQueryOperationResultPaths> output;
   }
 
   /**
