@@ -1,7 +1,7 @@
 import type * as RDF from '@rdfjs/types';
 import type { AsyncIterator } from 'asynciterator';
 import type { BindingsStream } from './Bindings';
-import type { PathStream } from './Paths'
+import type { PathStream } from './Path'
 import type { IActionContext } from './IActionContext';
 import type { IMetadata, MetadataQuads, MetadataBindings } from './IMetadata';
 // import { IActorRdfUpdateHypermediaPatchSparqlUpdateArgs } from '../../actor-rdf-update-hypermedia-patch-sparql-update/lib';

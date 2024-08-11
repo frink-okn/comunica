@@ -1,5 +1,5 @@
 export * from './Bindings';
-export * from './Paths';
+export * from './Path';
 export * from './IActionContext';
 export * from './IAggregatedStore';
 export * from './ICliArgsHandler';

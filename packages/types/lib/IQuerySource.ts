@@ -2,7 +2,7 @@ import type * as RDF from '@rdfjs/types';
 import type { AsyncIterator } from 'asynciterator';
 import type { Algebra } from 'sparqlalgebrajs-nrt';
 import type { BindingsStream } from './Bindings';
-import type { PathStream } from './Paths';
+import type { PathStream } from './Path';
 import type { IActionContext } from './IActionContext';
 import type { MetadataBindings } from './IMetadata';
 
