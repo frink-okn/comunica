@@ -24,9 +24,8 @@ export class ActorQueryOperationPaths extends ActorQueryOperationTypedMediated<A
     var end = _operation.end;
 
     // No paths between two of the same nodes.
-    if (start.equals(end)) return false;
+    return !start.equals(end) && _operation.type === 'paths';
 
-    return true; 
   }
 
   public async runOperation(operation: Algebra.Paths, context: IActionContext):
