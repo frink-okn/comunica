@@ -7,7 +7,7 @@ import type { IActorTest } from '@comunica/core';
 import { AsyncEvaluator } from '@comunica/expression-evaluator';
 import type { BindingsStream, IActionContext, IQueryOperationResult } from '@comunica/types';
 import { ArrayIterator, TransformIterator } from 'asynciterator';
-import type { Algebra } from 'sparqlalgebrajs-nrt';
+import type { Algebra } from 'sparqlalgebrajs';
 import { GroupsState } from './GroupsState';
 
 /**

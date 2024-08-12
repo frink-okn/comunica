@@ -3,7 +3,7 @@ import { ActorQueryOperation } from '@comunica/bus-query-operation';
 import { ActionContext, Bus } from '@comunica/core';
 import { ArrayIterator } from 'asynciterator';
 import { DataFactory } from 'rdf-data-factory';
-import { Algebra, Factory } from 'sparqlalgebrajs-nrt';
+import { Algebra, Factory } from 'sparqlalgebrajs';
 import { ActorQueryOperationPathLink } from '../lib/ActorQueryOperationPathLink';
 import '@comunica/jest';
 

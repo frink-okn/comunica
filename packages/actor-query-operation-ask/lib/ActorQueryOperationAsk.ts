@@ -6,7 +6,7 @@ import type {
   IQueryOperationResult,
   IQueryOperationResultBindings,
 } from '@comunica/types';
-import type { Algebra } from 'sparqlalgebrajs-nrt';
+import type { Algebra } from 'sparqlalgebrajs';
 
 /**
  * A comunica Ask Query Operation Actor.

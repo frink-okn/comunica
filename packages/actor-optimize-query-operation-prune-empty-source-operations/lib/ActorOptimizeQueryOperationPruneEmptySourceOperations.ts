@@ -9,7 +9,7 @@ import { KeysQuerySourceIdentify } from '@comunica/context-entries';
 import type { IActorTest } from '@comunica/core';
 import type { IActionContext, IQuerySourceWrapper, MetadataBindings } from '@comunica/types';
 import { DataFactory } from 'rdf-data-factory';
-import { Algebra, Factory, Util } from 'sparqlalgebrajs-nrt';
+import { Algebra, Factory, Util } from 'sparqlalgebrajs';
 
 const AF = new Factory();
 const DF = new DataFactory();

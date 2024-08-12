@@ -6,7 +6,7 @@ import type { MediatorRdfJoin } from '@comunica/bus-rdf-join';
 import type { IActorTest } from '@comunica/core';
 import { AsyncEvaluator, isExpressionError } from '@comunica/expression-evaluator';
 import type { IQueryOperationResult, Bindings, IActionContext, IJoinEntry } from '@comunica/types';
-import type { Algebra } from 'sparqlalgebrajs-nrt';
+import type { Algebra } from 'sparqlalgebrajs';
 
 /**
  * A comunica LeftJoin Query Operation Actor.

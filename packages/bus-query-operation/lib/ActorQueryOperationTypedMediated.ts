@@ -1,4 +1,4 @@
-import type { Algebra } from 'sparqlalgebrajs-nrt';
+import type { Algebra } from 'sparqlalgebrajs';
 import type { IActorQueryOperationArgs, MediatorQueryOperation } from './ActorQueryOperation';
 import { ActorQueryOperationTyped } from './ActorQueryOperationTyped';
 

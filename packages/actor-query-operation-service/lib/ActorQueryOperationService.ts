@@ -8,7 +8,7 @@ import { MetadataValidationState } from '@comunica/metadata';
 import type { IActionContext, IQueryOperationResult, IQueryOperationResultBindings } from '@comunica/types';
 import type * as RDF from '@rdfjs/types';
 import { SingletonIterator } from 'asynciterator';
-import type { Algebra } from 'sparqlalgebrajs-nrt';
+import type { Algebra } from 'sparqlalgebrajs';
 
 /**
  * A comunica Service Query Operation Actor.

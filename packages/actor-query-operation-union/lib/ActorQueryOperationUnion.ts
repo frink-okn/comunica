@@ -18,7 +18,7 @@ import type {
 import type * as RDF from '@rdfjs/types';
 import { UnionIterator } from 'asynciterator';
 import { uniqTerms } from 'rdf-terms';
-import type { Algebra } from 'sparqlalgebrajs-nrt';
+import type { Algebra } from 'sparqlalgebrajs';
 
 /**
  * A comunica Union Query Operation Actor.

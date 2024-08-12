@@ -10,7 +10,7 @@ import arrayifyStream from 'arrayify-stream';
 import { ArrayIterator } from 'asynciterator';
 import { DataFactory } from 'rdf-data-factory';
 import { PassThrough } from 'readable-stream';
-import { Factory } from 'sparqlalgebrajs-nrt';
+import { Factory } from 'sparqlalgebrajs';
 import { QuerySourceQpf } from '../lib/QuerySourceQpf';
 import '@comunica/jest';
 

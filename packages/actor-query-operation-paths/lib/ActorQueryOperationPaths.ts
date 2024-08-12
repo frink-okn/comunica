@@ -3,7 +3,7 @@ import { IActorTest } from '@comunica/core';
 import type { IActionContext, IQueryOperationResultPaths } from '@comunica/types';
 import { ArrayIterator, AsyncIterator } from 'asynciterator';
 import { Path } from '@comunica/path-factory';
-import { Algebra } from 'sparqlalgebrajs-nrt';
+import { Algebra } from 'sparqlalgebrajs';
 import {Utils} from "./Utils"
 import * as RDF from '@rdfjs/types';
 // import { DataFactory } from 'rdf-data-factory';

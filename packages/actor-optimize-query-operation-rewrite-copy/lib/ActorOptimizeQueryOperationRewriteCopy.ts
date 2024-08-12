@@ -5,7 +5,7 @@ import type {
 } from '@comunica/bus-optimize-query-operation';
 import { ActorOptimizeQueryOperation } from '@comunica/bus-optimize-query-operation';
 import type { IActorTest } from '@comunica/core';
-import { Algebra, Util } from 'sparqlalgebrajs-nrt';
+import { Algebra, Util } from 'sparqlalgebrajs';
 
 /**
  * A comunica Rewrite Copy Optimize Query Operation Actor.

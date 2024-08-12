@@ -8,8 +8,8 @@ import type { IActorTest } from '@comunica/core';
 import type { IActionContext } from '@comunica/types';
 import type * as RDF from '@rdfjs/types';
 import { uniqTerms } from 'rdf-terms';
-import type { Factory } from 'sparqlalgebrajs-nrt';
-import { Algebra, Util } from 'sparqlalgebrajs-nrt';
+import type { Factory } from 'sparqlalgebrajs';
+import { Algebra, Util } from 'sparqlalgebrajs';
 
 /**
  * A comunica Filter Pushdown Optimize Query Operation Actor.

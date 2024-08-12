@@ -1,6 +1,6 @@
 import * as RDF from '@rdfjs/types';
 import { ActorQueryOperation } from '@comunica/bus-query-operation';
-import { Algebra, Factory, translate } from 'sparqlalgebrajs-nrt';
+import { Algebra, Factory, translate } from 'sparqlalgebrajs';
 import { QuerySourceSkolemized } from '@comunica/actor-context-preprocess-query-source-skolemize';
 import { IActionContext, IActionContextKey } from '@comunica/types'
 

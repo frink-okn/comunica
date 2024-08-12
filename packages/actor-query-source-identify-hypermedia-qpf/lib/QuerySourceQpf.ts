@@ -25,8 +25,8 @@ import {
   mapTerms,
   matchPattern,
 } from 'rdf-terms';
-import type { Algebra } from 'sparqlalgebrajs-nrt';
-import { Factory } from 'sparqlalgebrajs-nrt';
+import type { Algebra } from 'sparqlalgebrajs';
+import { Factory } from 'sparqlalgebrajs';
 
 const AF = new Factory();
 const DF = new DataFactory<RDF.BaseQuad>();

@@ -10,7 +10,7 @@ import {
   SingletonIterator,
   UnionIterator,
 } from 'asynciterator';
-import { Algebra } from 'sparqlalgebrajs-nrt';
+import { Algebra } from 'sparqlalgebrajs';
 
 /**
  * A comunica Path ZeroOrOne Query Operation Actor.

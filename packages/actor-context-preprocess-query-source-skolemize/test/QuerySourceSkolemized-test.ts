@@ -5,7 +5,7 @@ import { MetadataValidationState } from '@comunica/metadata';
 import type { IQuerySource } from '@comunica/types';
 import { ArrayIterator } from 'asynciterator';
 import { DataFactory } from 'rdf-data-factory';
-import { Factory } from 'sparqlalgebrajs-nrt';
+import { Factory } from 'sparqlalgebrajs';
 import { QuerySourceSkolemized } from '../lib/QuerySourceSkolemized';
 import '@comunica/jest';
 import 'jest-rdf';

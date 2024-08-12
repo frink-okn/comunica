@@ -9,7 +9,7 @@ import type { IActorTest } from '@comunica/core';
 import type { ExpressionError } from '@comunica/expression-evaluator';
 import { AsyncEvaluator, isExpressionError } from '@comunica/expression-evaluator';
 import type { Bindings, IActionContext, IQueryOperationResult, IQueryOperationResultBindings } from '@comunica/types';
-import type { Algebra } from 'sparqlalgebrajs-nrt';
+import type { Algebra } from 'sparqlalgebrajs';
 
 /**
  * A comunica Extend Query Operation Actor.

@@ -6,7 +6,7 @@ import type { IQueryOperationResultVoid } from '@comunica/types';
 import arrayifyStream from 'arrayify-stream';
 import { ArrayIterator } from 'asynciterator';
 import { DataFactory } from 'rdf-data-factory';
-import { Factory } from 'sparqlalgebrajs-nrt';
+import { Factory } from 'sparqlalgebrajs';
 import { ActorQueryOperationUpdateDeleteInsert } from '../lib/ActorQueryOperationUpdateDeleteInsert';
 import 'jest-rdf';
 

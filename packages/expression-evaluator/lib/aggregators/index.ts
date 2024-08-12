@@ -1,5 +1,5 @@
 import type * as RDF from '@rdfjs/types';
-import type { Algebra } from 'sparqlalgebrajs-nrt';
+import type { Algebra } from 'sparqlalgebrajs';
 import type { ICompleteSharedContext } from '../evaluators/evaluatorHelpers/BaseExpressionEvaluator';
 import type { SetFunction } from '../util/Consts';
 import type { AggregatorComponent } from './Aggregator';

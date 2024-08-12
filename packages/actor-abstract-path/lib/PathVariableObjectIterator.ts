@@ -6,8 +6,8 @@ import type { AsyncIterator } from 'asynciterator';
 import { BufferedIterator } from 'asynciterator';
 import { DataFactory } from 'rdf-data-factory';
 import { termToString } from 'rdf-string';
-import type { Algebra } from 'sparqlalgebrajs-nrt';
-import { Factory } from 'sparqlalgebrajs-nrt';
+import type { Algebra } from 'sparqlalgebrajs';
+import { Factory } from 'sparqlalgebrajs';
 
 const DF = new DataFactory();
 const FACTORY = new Factory();

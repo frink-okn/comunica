@@ -7,8 +7,8 @@ import type * as RDF from '@rdfjs/types';
 import { AsyncIterator, wrap as wrapAsyncIterator } from 'asynciterator';
 import { DataFactory } from 'rdf-data-factory';
 import { someTermsNested, filterTermsNested, someTerms, uniqTerms } from 'rdf-terms';
-import type { Algebra } from 'sparqlalgebrajs-nrt';
-import { Factory } from 'sparqlalgebrajs-nrt';
+import type { Algebra } from 'sparqlalgebrajs';
+import { Factory } from 'sparqlalgebrajs';
 import type { IRdfJsSourceExtended } from './IRdfJsSourceExtended';
 
 const AF = new Factory();

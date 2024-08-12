@@ -21,7 +21,7 @@ import type {
 import type * as RDF from '@rdfjs/types';
 import type { AsyncIterator } from 'asynciterator';
 import { UnionIterator } from 'asynciterator';
-import { Factory } from 'sparqlalgebrajs-nrt';
+import { Factory } from 'sparqlalgebrajs';
 
 /**
  * A comunica Inner Multi Smallest Filter Bindings RDF Join Actor.

@@ -1,5 +1,5 @@
 import type * as RDF from '@rdfjs/types';
-import type { Algebra as Alg } from 'sparqlalgebrajs-nrt';
+import type { Algebra as Alg } from 'sparqlalgebrajs';
 import * as E from '../../expressions';
 import type { AsyncExtension } from '../../expressions';
 import type { EvalContextAsync } from '../../functions';

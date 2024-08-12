@@ -1,5 +1,5 @@
 import type * as RDF from '@rdfjs/types';
-import type { Algebra } from 'sparqlalgebrajs-nrt';
+import type { Algebra } from 'sparqlalgebrajs';
 import type { IAsyncEvaluatorContext } from './AsyncEvaluator';
 import { AsyncEvaluator } from './AsyncEvaluator';
 import { BaseAggregateEvaluator } from './evaluatorHelpers/BaseAggregateEvaluator';

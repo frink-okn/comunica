@@ -12,7 +12,7 @@ import type { IActionContext, IQueryOperationResultBindings } from '@comunica/ty
 import type * as RDF from '@rdfjs/types';
 import { ArrayIterator } from 'asynciterator';
 import { DataFactory } from 'rdf-data-factory';
-import { Factory, Algebra } from 'sparqlalgebrajs-nrt';
+import { Factory, Algebra } from 'sparqlalgebrajs';
 import { ActorRdfJoinMultiBind } from '../lib/ActorRdfJoinMultiBind';
 import '@comunica/jest';
 

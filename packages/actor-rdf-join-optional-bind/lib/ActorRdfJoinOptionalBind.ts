@@ -9,7 +9,7 @@ import { ActorRdfJoin } from '@comunica/bus-rdf-join';
 import { KeysQueryOperation } from '@comunica/context-entries';
 import type { IMediatorTypeJoinCoefficients } from '@comunica/mediatortype-join-coefficients';
 import type { Bindings, BindingsStream, MetadataBindings } from '@comunica/types';
-import { Algebra } from 'sparqlalgebrajs-nrt';
+import { Algebra } from 'sparqlalgebrajs';
 
 /**
  * A comunica Optional Bind RDF Join Actor.

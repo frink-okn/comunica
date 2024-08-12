@@ -9,7 +9,7 @@ import type { IActorTest } from '@comunica/core';
 import { AsyncEvaluator, isExpressionError, orderTypes } from '@comunica/expression-evaluator';
 import type { Bindings, IActionContext, IQueryOperationResult } from '@comunica/types';
 import type { Term } from '@rdfjs/types';
-import { Algebra } from 'sparqlalgebrajs-nrt';
+import { Algebra } from 'sparqlalgebrajs';
 import { SortIterator } from './SortIterator';
 
 /**

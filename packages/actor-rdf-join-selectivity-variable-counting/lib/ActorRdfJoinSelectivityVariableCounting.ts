@@ -2,7 +2,7 @@ import type { IActionRdfJoinSelectivity, IActorRdfJoinSelectivityOutput } from '
 import { ActorRdfJoinSelectivity } from '@comunica/bus-rdf-join-selectivity';
 import type { IActorArgs } from '@comunica/core';
 import type { IMediatorTypeAccuracy } from '@comunica/mediatortype-accuracy';
-import { Algebra, Util } from 'sparqlalgebrajs-nrt';
+import { Algebra, Util } from 'sparqlalgebrajs';
 
 /**
  * A comunica Variable Counting RDF Join Selectivity Actor.

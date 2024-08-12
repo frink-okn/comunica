@@ -10,7 +10,7 @@ import 'cross-fetch/polyfill';
 
 // Needed to load Headers
 import 'jest-rdf';
-import { Algebra, Factory } from 'sparqlalgebrajs-nrt';
+import { Algebra, Factory } from 'sparqlalgebrajs';
 import { QuerySourceSparql } from '../lib/QuerySourceSparql';
 import '@comunica/jest';
 

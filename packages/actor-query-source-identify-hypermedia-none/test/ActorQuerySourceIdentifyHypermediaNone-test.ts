@@ -4,7 +4,7 @@ import { ActionContext, Bus } from '@comunica/core';
 import { MetadataValidationState } from '@comunica/metadata';
 import type { BindingsStream, IActionContext } from '@comunica/types';
 import { DataFactory } from 'rdf-data-factory';
-import { Factory } from 'sparqlalgebrajs-nrt';
+import { Factory } from 'sparqlalgebrajs';
 import {
   ActorQuerySourceIdentifyHypermediaNone,
 } from '../lib/ActorQuerySourceIdentifyHypermediaNone';

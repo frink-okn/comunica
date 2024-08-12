@@ -5,7 +5,7 @@ import { AsyncAggregateEvaluator } from '@comunica/expression-evaluator';
 import type { Bindings } from '@comunica/types';
 import type * as RDF from '@rdfjs/types';
 import { DataFactory } from 'rdf-data-factory';
-import type { Algebra } from 'sparqlalgebrajs-nrt';
+import type { Algebra } from 'sparqlalgebrajs';
 
 const DF = new DataFactory();
 

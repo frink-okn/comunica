@@ -1,5 +1,5 @@
 import type * as RDF from '@rdfjs/types';
-import type { Algebra as Alg } from 'sparqlalgebrajs-nrt';
+import type { Algebra as Alg } from 'sparqlalgebrajs';
 import * as E from '../../expressions';
 import type { SyncExtension } from '../../expressions';
 import type { EvalContextSync } from '../../functions';

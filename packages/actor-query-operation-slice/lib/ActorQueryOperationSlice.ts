@@ -13,7 +13,7 @@ import type {
   IActionContext,
 } from '@comunica/types';
 import type { AsyncIterator } from 'asynciterator';
-import type { Algebra } from 'sparqlalgebrajs-nrt';
+import type { Algebra } from 'sparqlalgebrajs';
 
 /**
  * A comunica Slice Query Operation Actor.

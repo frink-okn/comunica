@@ -2,7 +2,7 @@ import { ActionContext, Bus } from '@comunica/core';
 import { ArrayIterator } from 'asynciterator';
 import { ActorQueryOperationPaths } from '../lib/ActorQueryOperationPaths';
 import { ActorQueryOperation } from '@comunica/bus-query-operation';
-import { Algebra } from 'sparqlalgebrajs-nrt';
+import { Algebra } from 'sparqlalgebrajs';
 import { DataFactory } from 'rdf-data-factory';
 import { Path } from '@comunica/path-factory';
 

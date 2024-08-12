@@ -25,7 +25,7 @@ import type {
 } from '@comunica/types';
 
 import type * as RDF from '@rdfjs/types';
-import type { Algebra } from 'sparqlalgebrajs-nrt';
+import type { Algebra } from 'sparqlalgebrajs';
 
 /**
  * A comunica Sequential Query Process Actor.

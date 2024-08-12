@@ -17,7 +17,7 @@ import { wrap, TransformIterator } from 'asynciterator';
 import { SparqlEndpointFetcher } from 'fetch-sparql-endpoint';
 import { LRUCache } from 'lru-cache';
 import { DataFactory } from 'rdf-data-factory';
-import { Algebra, Factory, toSparql, Util } from 'sparqlalgebrajs-nrt';
+import { Algebra, Factory, toSparql, Util } from 'sparqlalgebrajs';
 import type { BindMethod } from './ActorQuerySourceIdentifyHypermediaSparql';
 
 const AF = new Factory();

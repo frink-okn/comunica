@@ -7,7 +7,7 @@ import { ActorOptimizeQueryOperation } from '@comunica/bus-optimize-query-operat
 import { ActorQueryOperation } from '@comunica/bus-query-operation';
 import type { IActorTest } from '@comunica/core';
 import type { IActionContext, IQuerySourceWrapper } from '@comunica/types';
-import { Algebra, Factory } from 'sparqlalgebrajs-nrt';
+import { Algebra, Factory } from 'sparqlalgebrajs';
 
 const AF = new Factory();
 

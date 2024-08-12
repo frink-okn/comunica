@@ -1,8 +1,8 @@
 import type { IActionQueryParse, IActorQueryParseArgs, IActorQueryParseOutput } from '@comunica/bus-query-parse';
 import { ActorQueryParse } from '@comunica/bus-query-parse';
 import type { IActorTest } from '@comunica/core';
-import { translate } from 'sparqlalgebrajs-nrt';
-import { Parser as SparqlParser } from 'sparqljs-nrt';
+import { translate } from 'sparqlalgebrajs';
+import { Parser as SparqlParser } from 'sparqljs';
 
 /**
  * A comunica Algebra SPARQL Parse Actor.

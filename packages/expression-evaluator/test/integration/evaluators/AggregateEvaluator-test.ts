@@ -1,8 +1,8 @@
 import { BindingsFactory } from '@comunica/bindings-factory';
 import type * as RDF from '@rdfjs/types';
 import { DataFactory } from 'rdf-data-factory';
-import { Algebra } from 'sparqlalgebrajs-nrt';
-import { Wildcard } from 'sparqljs-nrt';
+import { Algebra } from 'sparqlalgebrajs';
+import { Wildcard } from 'sparqljs';
 import { AggregateEvaluator, AsyncAggregateEvaluator } from '../../../lib';
 
 const DF = new DataFactory();
