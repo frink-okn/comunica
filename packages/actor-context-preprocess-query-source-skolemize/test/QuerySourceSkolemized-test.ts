@@ -31,6 +31,10 @@ describe('QuerySourceSkolemized', () => {
         return it;
       }),
       queryBoolean: <any> jest.fn(async() => true),
+      queryPaths: <any> jest.fn(() => {
+        const it = new ArrayIterator([], { autoStart: false });
+        return it;
+      }),
       queryQuads: <any> jest.fn(() => {
         const it = new ArrayIterator([
           DF.quad(DF.namedNode('s1'), DF.namedNode('p1'), DF.blankNode('o1')),

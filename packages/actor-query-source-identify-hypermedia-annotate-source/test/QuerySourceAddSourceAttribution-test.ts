@@ -31,6 +31,10 @@ describe('QuerySourcAddSourceAttribution', () => {
         it.setProperty('metadata', { state: new MetadataValidationState() });
         return it;
       }),
+      queryPaths: <any> jest.fn(() => {
+        const it = new ArrayIterator([], { autoStart: false });
+        return it;
+      }),
       queryBoolean: <any> jest.fn(async() => true),
       queryQuads: <any> jest.fn(() => {
         const it = new ArrayIterator([
