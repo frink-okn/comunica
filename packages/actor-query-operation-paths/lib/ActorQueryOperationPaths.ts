@@ -6,7 +6,7 @@ import { Path } from '@comunica/path-factory';
 import { Algebra } from 'sparqlalgebrajs';
 import {Utils} from "./Utils"
 import * as RDF from '@rdfjs/types';
-// import { DataFactory } from 'rdf-data-factory';
+import { DataFactory } from 'rdf-data-factory';
 // import { Parser as SparqlParser, Generator as SparqlGenerator } from 'sparqljs'
 
 /**
@@ -20,20 +20,26 @@ export class ActorQueryOperationPaths extends ActorQueryOperationTypedMediated<A
   }
 
   public async testOperation(_operation: Algebra.Paths, _context: IActionContext): Promise<IActorTest> {
-    var start = _operation.start;
-    var end = _operation.end;
+    // var start = _operation.start.value;
+    // var end = _operation.end.value;
 
     // No paths between two of the same nodes.
-    return !start.equals(end) && _operation.type === 'paths';
+    return _operation.type === 'paths';
 
   }
 
   public async runOperation(operation: Algebra.Paths, context: IActionContext):
   Promise<IQueryOperationResultPaths> {
 
-    var start = operation.start;
-    var via = operation.via;
-    var end = operation.end;
+    const DF = new DataFactory();
+
+    var start = operation.start.value ? operation.start.value : operation.start.var;
+      // DF.namedNode(operation.start.var.value);
+    
+    
+
+    var via = operation.via.value;
+    var end = operation.end.value ? operation.end.value: operation.end.var;
 
     // Run paths algorithm depending on type of query (cyclic or shortest/all paths?).
     var utils = new Utils(this.mediatorQueryOperation, context); 

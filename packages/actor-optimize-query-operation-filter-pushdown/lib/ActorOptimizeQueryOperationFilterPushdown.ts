@@ -204,13 +204,28 @@ export class ActorOptimizeQueryOperationFilterPushdown extends ActorOptimizeQuer
         }
         return operation;
       case Algebra.types.PATHS:
+        let viaVar, viaVal; 
+        if ("var" in operation.via) {
+          viaVar = operation.via.var;
+          viaVal = undefined;
+        } else {
+          viaVar = undefined;
+          viaVal = operation.via.value;
+        }
+
         return factory.createPaths(
-          operation.start,
-        operation.via,
-        operation.end,
-        operation.shortest,
-        operation.cyclic,
-        operation.maxlength
+          operation.start.var,
+          operation.start.value,
+          viaVar,
+          viaVal,
+          operation.end.var,
+          operation.end.value,
+          operation.shortest,
+          operation.all,
+          operation.cyclic,
+          operation.maxlength,
+          operation.limit,
+          operation.offset
         );
       case Algebra.types.LEFT_JOIN:
       case Algebra.types.MINUS:
