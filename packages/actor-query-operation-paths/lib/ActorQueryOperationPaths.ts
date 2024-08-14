@@ -7,6 +7,8 @@ import { Algebra } from 'sparqlalgebrajs';
 import {Utils} from "./Utils"
 import * as RDF from '@rdfjs/types';
 import { DataFactory } from 'rdf-data-factory';
+import {IriTerm} from 'sparqljs'
+import { PathValue } from 'sparqlalgebrajs/lib/algebra';
 // import { Parser as SparqlParser, Generator as SparqlGenerator } from 'sparqljs'
 
 /**
@@ -32,14 +34,9 @@ export class ActorQueryOperationPaths extends ActorQueryOperationTypedMediated<A
   Promise<IQueryOperationResultPaths> {
 
     const DF = new DataFactory();
-
-    var start = operation.start.value ? operation.start.value : operation.start.var;
-      // DF.namedNode(operation.start.var.value);
-    
-    
-
-    var via = operation.via.value;
-    var end = operation.end.value ? operation.end.value: operation.end.var;
+    let start: RDF.Term = operation.start.value ? this.pathValue(operation.start) : DF.variable(operation.start.var.value);
+    let via: RDF.Term =  ("value" in operation.via) ? this.pathValue(operation.via.value) : DF.variable(operation.via.var);
+    let end: RDF.Term = operation.end.value ? this.pathValue(operation.end) : DF.variable(operation.end.var.value);
 
     // Run paths algorithm depending on type of query (cyclic or shortest/all paths?).
     var utils = new Utils(this.mediatorQueryOperation, context); 
@@ -53,6 +50,14 @@ export class ActorQueryOperationPaths extends ActorQueryOperationTypedMediated<A
       type: 'paths',
       pathStream: output,
     };
+  }
+
+  private pathValue(pathValue: any): RDF.Term {
+
+    if (pathValue.value && !Array.isArray(pathValue.value)) {
+      return pathValue.value;
+    }
+    throw new Error("Pathfinder cannot process graph patterns yet.")
   }
 
   private async paths(start: RDF.Term, via: RDF.Term, end: RDF.Term, operation: Algebra.Operation, utils: Utils)
