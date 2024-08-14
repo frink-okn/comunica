@@ -7,8 +7,6 @@ import { Algebra } from 'sparqlalgebrajs';
 import {Utils} from "./Utils"
 import * as RDF from '@rdfjs/types';
 import { DataFactory } from 'rdf-data-factory';
-import {IriTerm} from 'sparqljs'
-import { PathValue } from 'sparqlalgebrajs/lib/algebra';
 // import { Parser as SparqlParser, Generator as SparqlGenerator } from 'sparqljs'
 
 /**
@@ -35,7 +33,7 @@ export class ActorQueryOperationPaths extends ActorQueryOperationTypedMediated<A
 
     const DF = new DataFactory();
     let start: RDF.Term = operation.start.value ? this.pathValue(operation.start) : DF.variable(operation.start.var.value);
-    let via: RDF.Term =  ("value" in operation.via) ? this.pathValue(operation.via.value) : DF.variable(operation.via.var);
+    let via: RDF.Term =  ("value" in operation.via) ? this.pathValue(operation.via.value) : DF.variable(operation.via.var.value);
     let end: RDF.Term = operation.end.value ? this.pathValue(operation.end) : DF.variable(operation.end.var.value);
 
     // Run paths algorithm depending on type of query (cyclic or shortest/all paths?).
