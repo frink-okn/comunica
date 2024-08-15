@@ -30,7 +30,8 @@ export class Utils {
   }
 
   public async query(sub: RDF.Term, pred: RDF.Term): Promise<RDF.Bindings[]> {
-    
+    // console.log('sub sexy', sub)
+    // console.log('pred sexy', pred);
     if (pred.termType == 'Variable' || pred.value == '?p') {
       var q = `SELECT * WHERE {VALUES ?s { <${sub.value}> } ?s ?p ?o .}`;
     } else {

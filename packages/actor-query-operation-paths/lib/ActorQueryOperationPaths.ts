@@ -31,29 +31,17 @@ export class ActorQueryOperationPaths extends ActorQueryOperationTypedMediated<A
 
   public async runOperation(operation: Algebra.Paths, context: IActionContext):
   Promise<IQueryOperationResultPaths> {
-    
-    console.log('peachy 1');
     const DF = new DataFactory();
-    console.log('peachy 2');
     let start: RDF.Term = operation.start.value ? this.pathValue(operation.start) : DF.variable(operation.start.var.value);
-    console.log('peachy 3');
-    let via: RDF.Term =  ("value" in operation.via) ? this.pathValue(operation.via.value) : DF.variable(operation.via.var.value);
-    console.log('peachy 4');
+    let via: RDF.Term =  ("value" in operation.via) ? this.pathValue(operation.via) : DF.variable(operation.via.var.value);
     let end: RDF.Term = operation.end.value ? this.pathValue(operation.end) : DF.variable(operation.end.var.value);
-    console.log('peachy 5');
-
     // Run paths algorithm depending on type of query (cyclic or shortest/all paths?).
     var utils = new Utils(this.mediatorQueryOperation, context); 
-    console.log('peachy 6');
-    console.log(operation.cyclic);
-    console.log('peachy 6.1');
     let stream = operation.cyclic === true ?
       (await this.cyclicPaths(start, via, end, utils)) :
       (await this.paths(start, via, end, operation, utils));
-      console.log('peachy 7');
 
     const output: AsyncIterator<RDF.Path> = new ArrayIterator<RDF.Path>(stream, {autoStart: false});
-    console.log('peachy 8');
     return {
       type: 'paths',
       pathStream: output,
@@ -63,7 +51,7 @@ export class ActorQueryOperationPaths extends ActorQueryOperationTypedMediated<A
   private pathValue(pathValue: any): RDF.Term {
 
     if (pathValue.value && !Array.isArray(pathValue.value)) {
-      return pathValue.value;
+      return pathValue.value.value.value;
     }
     throw new Error("Pathfinder cannot process graph patterns yet.")
   }
