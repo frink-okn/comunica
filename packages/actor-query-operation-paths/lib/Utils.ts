@@ -33,9 +33,9 @@ export class Utils {
     // console.log('sub sexy', sub)
     // console.log('pred sexy', pred);
     if (pred.termType == 'Variable' || pred.value == '?p') {
-      var q = `SELECT * WHERE {VALUES ?s { <${sub.value}> } ?s ?p ?o .}`;
+      var q = `SELECT ?s ?p ?o WHERE {VALUES ?s { <${sub.value}> } ?s ?p ?o .}`;
     } else {
-      q = `SELECT * WHERE {VALUES ?s { <${sub.value}> } VALUES ?p { <${pred.value}> } ?s ?p ?o .}`;
+      q = `SELECT ?s ?p ?o WHERE {VALUES ?s { <${sub.value}> } VALUES ?p { <${pred.value}> } ?s ?p ?o .}`;
     }
     
     var unions: Algebra.Operation[] = [];

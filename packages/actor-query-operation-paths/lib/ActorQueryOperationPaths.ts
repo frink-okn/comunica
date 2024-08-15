@@ -7,6 +7,7 @@ import { Algebra } from 'sparqlalgebrajs';
 import {Utils} from "./Utils"
 import * as RDF from '@rdfjs/types';
 import { DataFactory } from 'rdf-data-factory';
+import { BindingsFactory } from '@comunica/bindings-factory';
 // import { Parser as SparqlParser, Generator as SparqlGenerator } from 'sparqljs'
 
 /**
@@ -58,6 +59,8 @@ export class ActorQueryOperationPaths extends ActorQueryOperationTypedMediated<A
 
   private async paths(start: RDF.Term, via: RDF.Term, end: RDF.Term, operation: Algebra.Operation, utils: Utils)
   : Promise<RDF.Path[]> {
+    const DF = new DataFactory();
+    const BF = new BindingsFactory();
 
     // Initialize data structures
     const traversed = new Set<RDF.Term>();
@@ -75,9 +78,14 @@ export class ActorQueryOperationPaths extends ActorQueryOperationTypedMediated<A
         // Get the neighbor node from the binding and skip if undefined.
         const neighbor = neighborBinding.get('o');
         if (!neighbor) continue;
-  
+    
+        var order = BF.bindings([
+          [DF.variable('s'), neighborBinding.get('s') ?? DF.namedNode('s')],
+          [DF.variable('p'), neighborBinding.get('p') ?? DF.namedNode('p')],
+          [DF.variable('o'), neighborBinding.get('o') ?? DF.namedNode('o')]])
+        const newPath = [...path, order];
         // Create a new path including the current neighborBinding.
-        const newPath = [...path, neighborBinding];
+        // const newPath = [...path, neighborBinding];
   
         // Check if the neighbor node is the target end node.
         if (end.termType === "NamedNode" && neighbor.value === end.value) {
@@ -95,7 +103,7 @@ export class ActorQueryOperationPaths extends ActorQueryOperationTypedMediated<A
       // Mark the current node as traversed.
       traversed.add(currentNode);
     }
-    console.log('path peachy');
+    
     // Return all found paths.
     return pathsArr;
   }
