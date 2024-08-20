@@ -6,7 +6,7 @@ import type { Term } from '@rdfjs/types';
 import type { Variable } from 'rdf-data-factory';
 import { DataFactory } from 'rdf-data-factory';
 import type { Algebra, Factory } from 'sparqlalgebrajs';
-import { Util} from 'sparqlalgebrajs';
+import { Util } from 'sparqlalgebrajs';
 import type { Operation, Pattern } from 'sparqlalgebrajs/lib/algebra';
 
 /**
@@ -50,7 +50,18 @@ export class ActorOptimizeQueryOperationPropertyFunction extends ActorOptimizeQu
         // const variableArg = extracted.args[0];
         const encodedArgs = this.DF.literal(JSON.stringify(extracted.args));
         const keepPatterns = bgp.patterns.filter(e => !extracted.remove.includes(e));
-        keepPatterns.push(factory.createPattern(labelPattern.subject, this.propertyFunctionPredicate, encodedArgs));
+        const pattern = factory.createPattern(
+          labelPattern.subject,
+          this.propertyFunctionPredicate,
+          labelPattern.object,
+        );
+        if (pattern.metadata) {
+          pattern.metadata.propfunc = encodedArgs;
+        } else {
+          pattern.metadata = { propfunc: encodedArgs };
+        }
+        keepPatterns.push(pattern);
+        //keepPatterns.push(factory.createPattern(labelPattern.subject, this.propertyFunctionPredicate, encodedArgs));
         return factory.createBgp(keepPatterns);
       }
     }
