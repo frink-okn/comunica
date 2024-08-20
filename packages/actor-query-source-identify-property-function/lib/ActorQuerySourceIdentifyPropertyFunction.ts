@@ -31,6 +31,7 @@ import { DataFactory } from 'rdf-data-factory';
 import { Factory } from 'sparqlalgebrajs';
 import type { Operation, Ask, Update, Alt } from 'sparqlalgebrajs/lib/algebra';
 import { MediatorOptimizeQueryOperation } from '@comunica/bus-optimize-query-operation';
+import { langMatches } from '@comunica/expression-evaluator/lib/functions/XPathFunctions';
 
 const AF = new Factory();
 const DF = new DataFactory<RDF.BaseQuad>();
@@ -81,6 +82,7 @@ export class QuerySourcePropertyFunction implements IQuerySource {
   private readonly mediatorQueryOperation: MediatorQueryOperation;
   public readonly mediatorOptimizeQueryOperation: MediatorOptimizeQueryOperation;
   private readonly mediatorQuerySourceIdentify: MediatorQuerySourceIdentify;
+  private readonly queryHandlers: Record<string, AutoLabel | undefined> = {};
   private readonly DF = new DataFactory();
   private readonly AF = new Factory(this.DF);
   private readonly label = DF.namedNode('http://www.w3.org/2000/01/rdf-schema#label');
@@ -131,42 +133,41 @@ export class QuerySourcePropertyFunction implements IQuerySource {
     if (operation.type !== 'pattern') {
       throw new Error(`Attempted to pass non-pattern operation '${operation.type}' to QuerySourcePropertyFunction`);
     }
+    if (operation.metadata) {
+      console.log(operation.metadata.propfunc);
+    }
     let it: AsyncIterator<Bindings> = new ArrayIterator<Bindings>();
-    let cardinality: QueryResultCardinality = { type: 'exact', value: 0 };
+    let cardinality: QueryResultCardinality = { type: 'exact', value: 1 };
     let variables: RDF.Variable[] = [];
-    const canContainUndefs = false;
+    // FIXME this was false but sometimes didn't work?
+    const canContainUndefs = true;
     if (operation.predicate === ActorOptimizeQueryOperationPropertyFunction.propertyFunctionPredicate &&
       operation.object.termType === 'Literal') {
-      const parsedArgs = JSON.parse(operation.object.value);
-      const outVariable = Array.isArray(parsedArgs) ? parsedArgs[0] : parsedArgs;
-      if (this.isVar(outVariable)) {
+      if (!this.queryHandlers[operation.object.value]) {
+        this.queryHandlers[operation.object.value] = new AutoLabel(operation.object.value);
+      }
+      const handler = this.queryHandlers[operation.object.value];
+      if (handler) {
         if (operation.subject.termType === 'Variable') {
+          //console.log('SUBJECT IS A VARIABLE');
           // Number.POSITIVE_INFINITY or Infinity don't seem to work to force the subject to be bound
           cardinality = { type: 'estimate', value: Number.MAX_SAFE_INTEGER };
+          //cardinality = { type: 'exact', value: 1000 };
           it = new EmptyIterator<Bindings>();
-          variables = [ operation.subject, outVariable ];
+          variables = [ operation.subject, handler.getOutVariable() ];
         } else {
-          const pattern = AF.createPath(operation.subject, this.defaultPropertyPath, outVariable);
-          const results =
-            // Make sure pattern gets sources assigned
-            this.mediatorOptimizeQueryOperation.mediate({ operation: pattern, context })
-              // Execute query
-              .then(optimizedOutput => this.mediatorQueryOperation.mediate(
-                { operation: optimizedOutput.operation, context: optimizedOutput.context },
-              )
-                // Return bindings stream
-                .then((result: IQueryOperationResult) => {
-                  if (result.type === 'bindings') {
-                    return result.bindingsStream;
-                  }
-                  return new EmptyIterator<Bindings>();
-                }));
-          const bindings = wrap(results);
-          return bindings;
+          //console.log('SUBJECT IS NOT A VARIABLE');
+          return handler.queryBindings(
+            operation,
+            context,
+            this.mediatorQueryOperation,
+            this.mediatorOptimizeQueryOperation,
+          );
         }
       }
     } else {
       it = new EmptyIterator<Bindings>();
+      cardinality = { type: 'exact', value: 0 };
       if (operation.subject.termType === 'Variable') {
         variables.push(operation.subject);
       }
@@ -226,8 +227,9 @@ class AutoLabel {
 
   private readonly defaultPropertyPath = AF.createAlt(this.defaultProperties.map(p => AF.createLink(p)));
   private readonly labelVar: Variable;
+  private readonly propertyVar = DF.variable('property___');
+  private readonly allArguments: (Literal | NamedNode)[] = [];
   private readonly properties: NamedNode[];
-  private readonly propertiesPath: Alt;
   private readonly languages: string[];
   public constructor(args: string) {
     const parsedArgs = JSON.parse(args);
@@ -237,28 +239,133 @@ class AutoLabel {
       const requestedLanguages = parsedArgs.filter(arg => this.isLiteral(arg));
       if (requestedLanguages.length === 0) {
         const locale = navigator ? navigator.language : 'en';
-        this.languages = [ locale ];
+        const dashLoc = locale.indexOf('-');
+        if (dashLoc > 0) {
+          const broader = locale.slice(0, dashLoc);
+          this.languages = [ locale, broader ];
+        } else {
+          this.languages = [ locale ];
+        }
       } else {
         this.languages = requestedLanguages.map(lang => lang.value);
       }
       const requestedProperties = parsedArgs.filter(arg => this.isNamedNode(arg));
       if (requestedProperties.length === 0) {
         this.properties = this.defaultProperties;
-        this.propertiesPath = this.defaultPropertyPath;
       } else {
-        this.properties = requestedProperties;
-        this.propertiesPath = AF.createAlt(requestedProperties.map(p => AF.createLink(p)));
+        this.properties = requestedProperties.map(p => DF.namedNode(p.value));
       }
     } else {
       variableObj = parsedArgs;
       this.properties = this.defaultProperties;
-      this.propertiesPath = this.defaultPropertyPath;
+    }
+    if (parsedArgs.length > 1) {
+      this.allArguments = parsedArgs.slice(1).map((arg: any) => {
+        if (this.isLiteral(arg)) {
+          const languageOrDatatype = arg.language === '' ? DF.namedNode(arg.datatype.value) : arg.language;
+          return DF.literal(arg.value, languageOrDatatype);
+        }
+        if (this.isNamedNode(arg)) {
+          return DF.namedNode(arg.value);
+        }
+        throw new Error('Arguments to label property should be property IRIs or language strings');
+      });
+    } else {
+      this.allArguments = [ ...this.languages.map(l => DF.literal(l)), ...this.properties ];
     }
     if (this.isVar(variableObj)) {
-      this.labelVar = variableObj;
+      this.labelVar = DF.variable(variableObj.value);
     } else {
       throw new Error('First argument to the autolabel property must be a variable.');
     }
+  }
+
+  public getOutVariable(): Variable {
+    return this.labelVar;
+  }
+
+  public queryBindings(
+    operation: Operation,
+    context: IActionContext,
+    mediatorQueryOperation: MediatorQueryOperation,
+    mediatorOptimizeQueryOperation: MediatorOptimizeQueryOperation,
+  ): BindingsStream {
+    // console.log('QUERY');
+    // console.log(operation.subject.value);
+    // console.log(operation.predicate.value);
+    // console.log(operation.object.value);
+    const pattern = AF.createPattern(operation.subject, this.propertyVar, this.labelVar);
+    const values = AF.createValues([ this.propertyVar ], this.properties.map(prop => ({ [`?${this.propertyVar.value}`]: prop })));
+    const join = AF.createJoin([ values, pattern ]);
+    const results =
+    // Make sure pattern gets sources assigned
+    mediatorOptimizeQueryOperation.mediate({ operation: join, context })
+    // Execute query
+      .then(optimizedOutput => mediatorQueryOperation.mediate(
+        { operation: optimizedOutput.operation, context: optimizedOutput.context },
+      )
+      // Return bindings stream
+        .then((result: IQueryOperationResult) => {
+          if (result.type === 'bindings') {
+            return result.bindingsStream.toArray().then((allBindings: Bindings[]) => {
+              //console.log(`All bindings: ${allBindings.length}`);
+              for (const arg of this.allArguments) {
+                //console.log(`ARG: ${arg.value}`);
+                if (arg.termType === 'NamedNode') {
+                  const matchedBindings = allBindings.filter(binding =>
+                    binding.get(this.propertyVar)?.value === arg.value);
+                  for (const lang of this.languages) {
+                    const goodBindings = matchedBindings.filter((binding) => {
+                      const value = binding.get(this.labelVar);
+                      return this.isLiteral(value) && langMatches(value.language, lang);
+                    });
+                    goodBindings.sort((a, b) =>
+                      (a.get(this.labelVar)?.value ?? '').localeCompare(b.get(this.labelVar)?.value ?? ''));
+                    if (goodBindings.length > 0) {
+                      //console.log(`returning ${JSON.stringify(goodBindings[0].filter((v, k) => k.value !== this.propertyVar.value))}`);
+                      return new SingletonIterator(
+                        goodBindings[0].filter((v, k) => k.value !== this.propertyVar.value),
+                      );
+                    }
+                  }
+                } else {
+                  const matchedBindings = allBindings.filter((binding) => {
+                    const value = binding.get(this.labelVar);
+                    // console.log(value?.value);
+                    // console.log((value as Literal).language);
+                    return this.isLiteral(value) && langMatches(value.language, arg.value);
+                  });
+                 // console.log(`Matched bindings: ${matchedBindings.length}`);
+                  for (const property of this.properties) {
+                    const goodBindings = matchedBindings.filter((binding) => {
+                      const prop = binding.get(this.propertyVar);
+                      return this.isNamedNode(prop) && prop.value === property.value;
+                    });
+                   // console.log(`Good bindings: ${goodBindings.length}`);
+                    goodBindings.sort((a, b) =>
+                      (a.get(this.labelVar)?.value ?? '').localeCompare(b.get(this.labelVar)?.value ?? ''));
+                    if (goodBindings.length > 0) {
+                      return new SingletonIterator(
+                        goodBindings[0].filter((v, k) => k.value !== this.propertyVar.value),
+                      );
+                    }
+                  }
+                }
+              }
+              // No preferred bindings found; return first alphabetically
+              allBindings.sort((a, b) =>
+                (a.get(this.labelVar)?.value ?? '').localeCompare(b.get(this.labelVar)?.value ?? ''));
+              if (allBindings.length > 0) {
+                //console.log(`returning ${JSON.stringify(allBindings[0].filter((v, k) => k.value !== this.propertyVar.value))}`);
+                return new SingletonIterator(allBindings[0].filter((v, k) => k.value !== this.propertyVar.value));
+              }
+              return new EmptyIterator<Bindings>();
+            });
+          }
+          return new EmptyIterator<Bindings>();
+        }));
+    const bindings = wrap(results);
+    return bindings;
   }
 
   private isVar(term: any): term is Variable {
