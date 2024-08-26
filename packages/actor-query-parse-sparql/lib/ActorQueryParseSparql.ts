@@ -35,7 +35,7 @@ export class ActorQueryParseSparql extends ActorQueryParse {
         baseIRI: action.baseIRI,
       }),
     };
-  } 
+  }
 }
 
 export interface IActorQueryParseSparqlArgs extends IActorQueryParseArgs {

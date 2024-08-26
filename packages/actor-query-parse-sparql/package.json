@@ -41,6 +41,6 @@
     "@comunica/core": "^3.2.1",
     "@types/sparqljs": "^3.1.3",
     "sparqlalgebrajs": "^4.3.7",
-    "sparqljs": "../SPARQL.js"
+    "sparqljs": "^3.7.1"
   }
 }
