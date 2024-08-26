@@ -1,6 +1,7 @@
 import type { BindingsFactory } from '@comunica/bindings-factory';
 import type { MediatorHttp } from '@comunica/bus-http';
 import { KeysInitQuery } from '@comunica/context-entries';
+import { Actor } from '@comunica/core';
 import type {
   IQuerySource,
   BindingsStream,
@@ -320,6 +321,41 @@ export class QuerySourceSparql implements IQuerySource {
   }
 
   /**
+   * Check if the given operation may produce undefined values.
+   * @param operation
+   */
+  public static operationCanContainUndefs(operation: Algebra.Operation): boolean {
+    let canContainUndefs = false;
+    Util.recurseOperation(operation, {
+      leftjoin(): boolean {
+        canContainUndefs = true;
+        return false;
+      },
+      values(values: Algebra.Values): boolean {
+        canContainUndefs = values.bindings.some(bindings => values.variables.some(variable => !(`?${variable.value}` in bindings)));
+        return false;
+      },
+      union(union: Algebra.Union): boolean {
+        // Determine variables in scope of the union branches
+        const scopedVariables = union.input
+          .map(Util.inScopeVariables)
+          .map(variables => variables.map(v => v.value))
+          .map(variables => variables.sort((a, b) => a.localeCompare(b)))
+          .map(variables => variables.join(','));
+
+        // If not all scoped variables in union branches are equal, then we definitely can have undefs
+        if (!scopedVariables.every(val => val === scopedVariables[0])) {
+          canContainUndefs = true;
+          return false;
+        }
+
+        return true;
+      },
+    });
+    return canContainUndefs;
+  }
+
+  /**
    * Send a SPARQL query to a SPARQL endpoint and retrieve its bindings as a stream.
    * @param {string} endpoint A SPARQL endpoint URL.
    * @param {string} query A SPARQL query string.
@@ -341,11 +377,12 @@ export class QuerySourceSparql implements IQuerySource {
       .map<RDF.Bindings>((rawData: Record<string, RDF.Term>) => this.bindingsFactory.bindings(variables
         .map((variable) => {
           const value = rawData[`?${variable.value}`];
-          if (!value) {
-            it.emit('error', new Error(`The endpoint ${endpoint} failed to provide a binding for ${variable.value}.`));
+          if (!canContainUndefs && !value) {
+            Actor.getContextLogger(this.context)?.warn(`The endpoint ${endpoint} failed to provide a binding for ${variable.value}.`);
           }
-          return [ variable, value ];
-        })));
+          return <[RDF.Variable, RDF.Term]> [ variable, value ];
+        })
+        .filter(([ _, v ]) => Boolean(v))));
     return it;
   }
 

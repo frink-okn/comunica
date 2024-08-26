@@ -555,6 +555,195 @@ describe('ActorOptimizeQueryOperationPruneEmptySourceOperations', () => {
             ],
           ));
         });
+
+        it('should not prune if the projection had other valid operations', async() => {
+          const opIn = AF.createProject(
+            AF.createUnion([
+              AF.createJoin([
+                AF.createUnion([
+                  ActorQueryOperation.assignOperationSource(AF
+                    .createPattern(DF.namedNode('s'), DF.namedNode('nonEmpty'), DF.variable('o')), source1),
+                  ActorQueryOperation.assignOperationSource(AF
+                    .createPattern(DF.namedNode('s'), DF.namedNode('nonEmpty'), DF.variable('o')), source1),
+                ]),
+              ]),
+              AF.createJoin([
+                AF.createUnion([
+                  ActorQueryOperation.assignOperationSource(AF
+                    .createPattern(DF.namedNode('s'), DF.namedNode('empty'), DF.variable('o')), source1),
+                  ActorQueryOperation.assignOperationSource(AF
+                    .createPattern(DF.namedNode('s'), DF.namedNode('nonEmpty'), DF.variable('o')), source1),
+                ]),
+              ]),
+              AF.createJoin([
+                AF.createUnion([
+                  ActorQueryOperation.assignOperationSource(AF
+                    .createPattern(DF.namedNode('s'), DF.namedNode('empty'), DF.variable('o')), source1),
+                  ActorQueryOperation.assignOperationSource(AF
+                    .createPattern(DF.namedNode('s'), DF.namedNode('empty'), DF.variable('o')), source1),
+                ]),
+              ]),
+            ]),
+            [
+              DF.variable('o'),
+            ],
+          );
+          const { operation: opOut } = await actor.run({ operation: opIn, context: ctx });
+          expect(opOut).toEqual(AF.createProject(
+            AF.createUnion([
+              AF.createJoin([
+                AF.createUnion([
+                  ActorQueryOperation.assignOperationSource(AF
+                    .createPattern(DF.namedNode('s'), DF.namedNode('nonEmpty'), DF.variable('o')), source1),
+                  ActorQueryOperation.assignOperationSource(AF
+                    .createPattern(DF.namedNode('s'), DF.namedNode('nonEmpty'), DF.variable('o')), source1),
+                ]),
+              ]),
+              AF.createJoin([
+                ActorQueryOperation.assignOperationSource(AF
+                  .createPattern(DF.namedNode('s'), DF.namedNode('nonEmpty'), DF.variable('o')), source1),
+              ]),
+              AF.createJoin([
+                AF.createUnion([]),
+              ]),
+            ]),
+            [
+              DF.variable('o'),
+            ],
+          ));
+        });
+
+        it('should prune if the projection contains mixed unions and joins', async() => {
+          const opIn = AF.createProject(
+            AF.createUnion([
+              AF.createJoin([
+                AF.createUnion([
+                  ActorQueryOperation.assignOperationSource(AF
+                    .createPattern(DF.namedNode('s'), DF.namedNode('empty'), DF.variable('o')), source1),
+                  ActorQueryOperation.assignOperationSource(AF
+                    .createPattern(DF.namedNode('s'), DF.namedNode('empty'), DF.variable('o')), source1),
+                ]),
+              ]),
+              AF.createJoin([
+                AF.createUnion([
+                  ActorQueryOperation.assignOperationSource(AF
+                    .createPattern(DF.namedNode('s'), DF.namedNode('empty'), DF.variable('o')), source1),
+                  ActorQueryOperation.assignOperationSource(AF
+                    .createPattern(DF.namedNode('s'), DF.namedNode('empty'), DF.variable('o')), source1),
+                ]),
+              ]),
+              AF.createJoin([
+                AF.createUnion([
+                  ActorQueryOperation.assignOperationSource(AF
+                    .createPattern(DF.namedNode('s'), DF.namedNode('empty'), DF.variable('o')), source1),
+                  ActorQueryOperation.assignOperationSource(AF
+                    .createPattern(DF.namedNode('s'), DF.namedNode('empty'), DF.variable('o')), source1),
+                ]),
+              ]),
+            ]),
+            [
+              DF.variable('o'),
+            ],
+          );
+          const { operation: opOut } = await actor.run({ operation: opIn, context: ctx });
+          expect(opOut).toEqual(AF.createUnion([]));
+        });
+
+        it('should prune out left joins with empty left operation', async() => {
+          const opIn = AF.createProject(
+            AF.createLeftJoin(
+              AF.createUnion([
+                ActorQueryOperation.assignOperationSource(AF
+                  .createPattern(DF.namedNode('s'), DF.namedNode('empty'), DF.variable('o')), source1),
+                ActorQueryOperation.assignOperationSource(AF
+                  .createPattern(DF.namedNode('s'), DF.namedNode('empty'), DF.variable('o')), source1),
+              ]),
+              AF.createUnion([
+                ActorQueryOperation.assignOperationSource(AF
+                  .createPattern(DF.namedNode('s'), DF.namedNode('nonEmpty'), DF.variable('o')), source1),
+                ActorQueryOperation.assignOperationSource(AF
+                  .createPattern(DF.namedNode('s'), DF.namedNode('nonEmpty'), DF.variable('o')), source1),
+              ]),
+            ),
+            [
+              DF.variable('o'),
+            ],
+          );
+          const { operation: opOut } = await actor.run({ operation: opIn, context: ctx });
+          expect(opOut).toEqual(AF.createUnion([]));
+        });
+
+        it('should not prune out left joins with non-empty left operation', async() => {
+          const opIn = AF.createProject(
+            AF.createLeftJoin(
+              AF.createUnion([
+                ActorQueryOperation.assignOperationSource(AF
+                  .createPattern(DF.namedNode('s'), DF.namedNode('nonEmpty'), DF.variable('o')), source1),
+                ActorQueryOperation.assignOperationSource(AF
+                  .createPattern(DF.namedNode('s'), DF.namedNode('nonEmpty'), DF.variable('o')), source1),
+              ]),
+              AF.createUnion([
+                ActorQueryOperation.assignOperationSource(AF
+                  .createPattern(DF.namedNode('s'), DF.namedNode('empty'), DF.variable('o')), source1),
+                ActorQueryOperation.assignOperationSource(AF
+                  .createPattern(DF.namedNode('s'), DF.namedNode('nonEmpty'), DF.variable('o')), source1),
+              ]),
+            ),
+            [
+              DF.variable('o'),
+            ],
+          );
+          const { operation: opOut } = await actor.run({ operation: opIn, context: ctx });
+          expect(opOut).toEqual(AF.createProject(
+            AF.createLeftJoin(
+              AF.createUnion([
+                ActorQueryOperation.assignOperationSource(AF
+                  .createPattern(DF.namedNode('s'), DF.namedNode('nonEmpty'), DF.variable('o')), source1),
+                ActorQueryOperation.assignOperationSource(AF
+                  .createPattern(DF.namedNode('s'), DF.namedNode('nonEmpty'), DF.variable('o')), source1),
+              ]),
+              ActorQueryOperation.assignOperationSource(AF
+                .createPattern(DF.namedNode('s'), DF.namedNode('nonEmpty'), DF.variable('o')), source1),
+            ),
+            [
+              DF.variable('o'),
+            ],
+          ));
+        });
+
+        it('should remove left joins operator with empty right operation', async() => {
+          const opIn = AF.createProject(
+            AF.createLeftJoin(
+              AF.createUnion([
+                ActorQueryOperation.assignOperationSource(AF
+                  .createPattern(DF.namedNode('s'), DF.namedNode('nonEmpty'), DF.variable('o')), source1),
+                ActorQueryOperation.assignOperationSource(AF
+                  .createPattern(DF.namedNode('s'), DF.namedNode('nonEmpty'), DF.variable('o')), source1),
+              ]),
+              AF.createUnion([
+                ActorQueryOperation.assignOperationSource(AF
+                  .createPattern(DF.namedNode('s'), DF.namedNode('empty'), DF.variable('o')), source1),
+                ActorQueryOperation.assignOperationSource(AF
+                  .createPattern(DF.namedNode('s'), DF.namedNode('empty'), DF.variable('o')), source1),
+              ]),
+            ),
+            [
+              DF.variable('o'),
+            ],
+          );
+          const { operation: opOut } = await actor.run({ operation: opIn, context: ctx });
+          expect(opOut).toEqual(AF.createProject(
+            AF.createUnion([
+              ActorQueryOperation.assignOperationSource(AF
+                .createPattern(DF.namedNode('s'), DF.namedNode('nonEmpty'), DF.variable('o')), source1),
+              ActorQueryOperation.assignOperationSource(AF
+                .createPattern(DF.namedNode('s'), DF.namedNode('nonEmpty'), DF.variable('o')), source1),
+            ]),
+            [
+              DF.variable('o'),
+            ],
+          ));
+        });
       });
     });
 

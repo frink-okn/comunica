@@ -4,6 +4,7 @@ import { QuerySourceSkolemized } from '@comunica/actor-context-preprocess-query-
 import { KeysHttpWayback, KeysQuerySourceIdentify } from '@comunica/context-entries';
 import { BlankNodeScoped } from '@comunica/data-factory';
 import type { QueryBindings, QueryStringContext } from '@comunica/types';
+import { stringify as stringifyStream } from '@jeswr/stream-to-string';
 import type * as RDF from '@rdfjs/types';
 import arrayifyStream from 'arrayify-stream';
 import 'jest-rdf';
@@ -12,9 +13,6 @@ import { DataFactory } from 'rdf-data-factory';
 import { Factory } from 'sparqlalgebrajs';
 import { QueryEngine } from '../lib/QueryEngine';
 import { fetch as cachedFetch } from './util';
-
-// Use require instead of import for default exports, to be compatible with variants of esModuleInterop in tsconfig.
-const stringifyStream = require('stream-to-string');
 
 const DF = new DataFactory();
 const factory = new Factory();
@@ -675,6 +673,35 @@ describe('System test: QuerySparql', () => {
         const bindings = results.map(binding => [ ...binding ]);
         expect(bindings).toMatchObject(expectedResult);
       });
+
+      it('should handle join with empty estimate cardinality', async() => {
+        const context: QueryStringContext = {
+          sources: [
+            {
+              type: 'serialized',
+              value: `
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix ex: <http://example.org/> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+ex:personA a ex:Person.
+#ex:personA ex:hasName "Homer".
+`,
+              mediaType: 'text/turtle',
+              baseIRI: 'http://example.org/',
+            },
+          ],
+        };
+
+        await expect((arrayifyStream(await engine.queryBindings(`
+PREFIX ex: <http://example.org/>
+SELECT ?person ?personName WHERE {
+    OPTIONAL {
+        ?person ex:hasName ?personName
+    }
+    ?person a ex:Person
+}
+`, context)))).resolves.toHaveLength(1);
+      });
     });
 
     describe('with a throwing fetch function', () => {
@@ -1267,25 +1294,20 @@ SELECT ?obsId {
           explain: true,
           type: 'logical',
           data: {
-            input: {
-              input: [
-                Object.assign(
-                  factory.createPattern(
-                    DF.variable('s'),
-                    DF.variable('p'),
-                    DF.variable('o'),
-                  ),
-                  {
-                    metadata: {
-                      scopedSource: {
-                        source: expect.any(QuerySourceSkolemized),
-                      },
-                    },
+            input: Object.assign(
+              factory.createPattern(
+                DF.variable('s'),
+                DF.variable('p'),
+                DF.variable('o'),
+              ),
+              {
+                metadata: {
+                  scopedSource: {
+                    source: expect.any(QuerySourceSkolemized),
                   },
-                ),
-              ],
-              type: 'join',
-            },
+                },
+              },
+            ),
             type: 'project',
             variables: [
               DF.variable('o'),
@@ -1306,8 +1328,7 @@ SELECT ?obsId {
           explain: true,
           type: 'physical',
           data: `project (o,p,s)
-  join
-    pattern (?s ?p ?o) src:0
+  pattern (?s ?p ?o) src:0
 
 sources:
   0: QuerySourceHypermedia(https://www.rubensworks.net/)(SkolemID:0)`,
@@ -1328,14 +1349,9 @@ sources:
             variables: [ 'o', 'p', 's' ],
             children: [
               {
-                logical: 'join',
-                children: [
-                  {
-                    logical: 'pattern',
-                    pattern: '?s ?p ?o',
-                    source: 'QuerySourceHypermedia(https://www.rubensworks.net/)(SkolemID:0)',
-                  },
-                ],
+                logical: 'pattern',
+                pattern: '?s ?p ?o',
+                source: 'QuerySourceHypermedia(https://www.rubensworks.net/)(SkolemID:0)',
               },
             ],
           },

@@ -80,29 +80,28 @@ export class ActorOptimizeQueryOperationPruneEmptySourceOperations extends Actor
           return self.mapMultiOperation(subOperation, emptyOperations, children => factory.createAlt(children));
         },
       });
-      // Identify and remove projections that have become empty now due to missing variables
+
+      // Identify and remove operations that have become empty now due to missing variables
       operation = Util.mapOperation(operation, {
         [Algebra.types.PROJECT](subOperation, factory) {
-          let emptyProject = false;
-          Util.recurseOperation(subOperation, {
-            [Algebra.types.UNION](subSubOperation) {
-              if (subSubOperation.input.length === 0) {
-                emptyProject = true;
-              }
-              return true;
-            },
-            [Algebra.types.ALT](subSubOperation) {
-              if (subSubOperation.input.length === 0) {
-                emptyProject = true;
-              }
-              return true;
-            },
-          });
-
-          if (emptyProject) {
+          // Remove projections that have become empty now due to missing variables
+          if (ActorOptimizeQueryOperationPruneEmptySourceOperations.hasEmptyOperation(subOperation)) {
             return {
               recurse: false,
               result: factory.createUnion([]),
+            };
+          }
+          return {
+            recurse: true,
+            result: subOperation,
+          };
+        },
+        [Algebra.types.LEFT_JOIN](subOperation) {
+          // Remove left joins with empty right operation
+          if (ActorOptimizeQueryOperationPruneEmptySourceOperations.hasEmptyOperation(subOperation.input[1])) {
+            return {
+              recurse: true,
+              result: subOperation.input[0],
             };
           }
           return {
@@ -114,6 +113,36 @@ export class ActorOptimizeQueryOperationPruneEmptySourceOperations extends Actor
     }
 
     return { operation, context: action.context };
+  }
+
+  protected static hasEmptyOperation(operation: Algebra.Operation): boolean {
+    // If union (or alt) is empty, consider it empty (`Array.every` on an empty array always returns true)
+    // But if we find a union with multiple children,
+    // *all* of the children must be empty before the full operation is considered empty.
+    let emptyOperation = false;
+    Util.recurseOperation(operation, {
+      [Algebra.types.UNION](subOperation) {
+        if (subOperation.input.every(subSubOperation => ActorOptimizeQueryOperationPruneEmptySourceOperations
+          .hasEmptyOperation(subSubOperation))) {
+          emptyOperation = true;
+        }
+        return false;
+      },
+      [Algebra.types.ALT](subOperation) {
+        if (subOperation.input.length === 0) {
+          emptyOperation = true;
+        }
+        return false;
+      },
+      [Algebra.types.LEFT_JOIN](subOperation) {
+        // Only recurse into left part of left-join
+        if (ActorOptimizeQueryOperationPruneEmptySourceOperations.hasEmptyOperation(subOperation.input[0])) {
+          emptyOperation = true;
+        }
+        return false;
+      },
+    });
+    return emptyOperation;
   }
 
   protected collectMultiOperationInputs(
