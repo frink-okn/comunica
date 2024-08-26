@@ -12,7 +12,6 @@
     "packages/data-factory",
     "packages/jest",
     "packages/packager",
-    "packages/path-factory",
     "packages/runner-cli",
     "packages/expression-evaluator"
   ],
