@@ -46,6 +46,6 @@
     "asynciterator": "^3.9.0",
     "rdf-data-factory": "^1.1.1",
     "rdf-string": "^1.6.1",
-    "sparqlalgebrajs": "../SPARQLAlgebra.js"
+    "sparqlalgebrajs": "^4.3.7"
   }
 }
