@@ -38,6 +38,6 @@
   "dependencies": {
     "@comunica/core": "^3.2.0",
     "@rdfjs/types": "*",
-    "sparqlalgebrajs": "../SPARQLAlgebra.js"
+    "sparqlalgebrajs": "^4.3.7"
   }
 }
