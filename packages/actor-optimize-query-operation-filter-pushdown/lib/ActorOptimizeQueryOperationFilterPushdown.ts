@@ -389,6 +389,7 @@ export class ActorOptimizeQueryOperationFilterPushdown extends ActorOptimizeQuer
             ) ];
           }
         }
+
         // Don't push down in all other cases
         return [ false, factory.createFilter(operation, expression) ];
       }
@@ -461,7 +462,7 @@ export class ActorOptimizeQueryOperationFilterPushdown extends ActorOptimizeQuer
           viaVal = operation.via.value;
         }
 
-        return factory.createPaths(
+        return [ true, factory.createPaths(
           operation.start.var,
           operation.start.value,
           viaVar,
@@ -473,8 +474,8 @@ export class ActorOptimizeQueryOperationFilterPushdown extends ActorOptimizeQuer
           operation.cyclic,
           operation.maxlength,
           operation.limit,
-          operation.offset
-        );
+          operation.offset,
+        ) ];
       case Algebra.types.MINUS:
       case Algebra.types.ALT:
       case Algebra.types.ASK:
