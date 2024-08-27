@@ -11,6 +11,7 @@ import { KeysInitQuery } from '@comunica/context-entries';
 import type { IActorTest } from '@comunica/core';
 import { ActionContextKey } from '@comunica/core';
 import { MemoryPhysicalQueryPlanLogger } from './MemoryPhysicalQueryPlanLogger';
+import { IQueryExplained, IQueryOperationResult } from '@comunica/types';
 
 /**
  * A comunica Explain Physical Query Process Actor.
@@ -47,6 +48,9 @@ export class ActorQueryProcessExplainPhysical extends ActorQueryProcess {
       case 'bindings':
         await output.bindingsStream.toArray();
         break;
+      case 'paths':
+        await output.pathStream.toArray();
+        break;
       case 'quads':
         await output.quadStream.toArray();
         break;
@@ -63,7 +67,8 @@ export class ActorQueryProcessExplainPhysical extends ActorQueryProcess {
     return {
       result: {
         explain: true,
-        type: mode,
+        type: 'physical',
+        // type: mode,
         data: mode === 'physical' ? physicalQueryPlanLogger.toCompactString() : physicalQueryPlanLogger.toJson(),
       },
     };

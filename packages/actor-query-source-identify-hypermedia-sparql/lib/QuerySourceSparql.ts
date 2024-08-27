@@ -5,6 +5,7 @@ import { Actor } from '@comunica/core';
 import type {
   IQuerySource,
   BindingsStream,
+  PathStream,
   IActionContext,
   FragmentSelectorShape,
   Bindings,
@@ -120,13 +121,35 @@ export class QuerySourceSparql implements IQuerySource {
       const selectQuery: string = !options?.joinBindings && queryString ?
         queryString :
         QuerySourceSparql.operationToSelectQuery(operation, variables);
-      const canContainUndefs = QuerySourceSparql.operationCanContainUndefs(operation);
 
-      return this.queryBindingsRemote(this.url, selectQuery, variables, context, canContainUndefs);
+      return this.queryBindingsRemote(this.url, selectQuery, variables, context);
     }, { autoStart: false });
     this.attachMetadata(bindings, context, operationPromise);
 
     return bindings;
+  }
+
+  // TODO
+  public queryPaths(_operation: Algebra.Operation, _context: IActionContext): PathStream {
+    // let operationPromise: Promise<Algebra.Operation> = Promise.resolve(operationIn);
+
+    // const paths: PathStream = new TransformIterator(async() => {
+    //   // Prepare queries
+    //   const operation = await operationPromise;
+    //   const variables: RDF.Variable[] = Util.inScopeVariables(operation);
+    //   const selectQuery: string = QuerySourceSparql.operationToSelectQuery(operation, variables);
+
+    //   return this.queryBindingsRemote(this.url, selectQuery, variables, context);
+    // }, { autoStart: false });
+    // this.attachMetadata(paths, context, operationPromise);
+
+    // this.lastSourceContext = this.context.merge(context);
+    // const promise = this.endpointFetcher.fetchPaths(
+    //   this.url,
+    //   context.get(KeysInitQuery.queryString) ?? QuerySourceSparql.operationToQuery(operation),
+    // );
+    // this.lastSourceContext = undefined;
+    throw new Error("Paths have not been implemented to query sparql sources yet.")
   }
 
   public queryQuads(operation: Algebra.Operation, context: IActionContext): AsyncIterator<RDF.Quad> {
@@ -168,7 +191,6 @@ export class QuerySourceSparql implements IQuerySource {
   ): void {
     // Emit metadata containing the estimated count
     let variablesCount: RDF.Variable[] = [];
-    let canContainUndefs = false;
     // eslint-disable-next-line no-async-promise-executor,ts/no-misused-promises
     new Promise<RDF.QueryResultCardinality>(async(resolve, reject) => {
       // Prepare queries
@@ -177,7 +199,6 @@ export class QuerySourceSparql implements IQuerySource {
         const operation = await operationPromise;
         variablesCount = Util.inScopeVariables(operation);
         countQuery = QuerySourceSparql.operationToCountQuery(operation);
-        canContainUndefs = QuerySourceSparql.operationCanContainUndefs(operation);
 
         const cachedCardinality = this.cache?.get(countQuery);
         if (cachedCardinality !== undefined) {
@@ -186,7 +207,7 @@ export class QuerySourceSparql implements IQuerySource {
 
         const timeoutHandler = setTimeout(() => resolve(COUNT_INFINITY), this.countTimeout);
         const bindingsStream: BindingsStream = await this
-          .queryBindingsRemote(this.url, countQuery, [ VAR_COUNT ], context, false);
+          .queryBindingsRemote(this.url, countQuery, [ VAR_COUNT ], context);
         bindingsStream.on('data', (bindings: Bindings) => {
           clearTimeout(timeoutHandler);
           const count = bindings.get(VAR_COUNT);
@@ -215,12 +236,12 @@ export class QuerySourceSparql implements IQuerySource {
     })
       .then(cardinality => target.setProperty('metadata', {
         cardinality,
-        canContainUndefs,
+        canContainUndefs: false,
         variables: variablesCount,
       }))
       .catch(() => target.setProperty('metadata', {
         cardinality: COUNT_INFINITY,
-        canContainUndefs,
+        canContainUndefs: false,
         variables: variablesCount,
       }));
   }
@@ -340,7 +361,6 @@ export class QuerySourceSparql implements IQuerySource {
    * @param {string} query A SPARQL query string.
    * @param {RDF.Variable[]} variables The expected variables.
    * @param {IActionContext} context The source context.
-   * @param canContainUndefs If the operation may contain undefined variables.
    * @return {BindingsStream} A stream of bindings.
    */
   public async queryBindingsRemote(
@@ -348,7 +368,6 @@ export class QuerySourceSparql implements IQuerySource {
     query: string,
     variables: RDF.Variable[],
     context: IActionContext,
-    canContainUndefs: boolean,
   ): Promise<BindingsStream> {
     this.lastSourceContext = this.context.merge(context);
     const rawStream = await this.endpointFetcher.fetchBindings(endpoint, query);
