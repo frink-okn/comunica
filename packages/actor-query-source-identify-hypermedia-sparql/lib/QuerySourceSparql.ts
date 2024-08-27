@@ -122,6 +122,7 @@ export class QuerySourceSparql implements IQuerySource {
         queryString :
         QuerySourceSparql.operationToSelectQuery(operation, variables);
       const canContainUndefs = QuerySourceSparql.operationCanContainUndefs(operation);
+
       return this.queryBindingsRemote(this.url, selectQuery, variables, context, canContainUndefs);
     }, { autoStart: false });
     this.attachMetadata(bindings, context, operationPromise);
