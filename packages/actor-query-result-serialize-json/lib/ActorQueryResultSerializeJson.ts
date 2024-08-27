@@ -5,6 +5,7 @@ import type {
 } from '@comunica/bus-query-result-serialize';
 import { ActorQueryResultSerializeFixedMediaTypes } from '@comunica/bus-query-result-serialize';
 import type {
+  Bindings,
   IActionContext,
   IQueryOperationResultBindings,
   IQueryOperationResultBoolean,
@@ -46,13 +47,17 @@ export class ActorQueryResultSerializeJson extends ActorQueryResultSerializeFixe
       // Do nothing
     };
 
-    if (action.type === 'bindings' || action.type === 'quads') {
+    if (action.type === 'bindings' || action.type === 'quads' || action.type === 'paths') {
       let stream = action.type === 'bindings' ?
         wrap((<IQueryOperationResultBindings> action).bindingsStream)
-          .map(element => JSON.stringify(Object.fromEntries([ ...element ]
-            .map(([ key, value ]) => [ key.value, RdfString.termToString(value) ])))) :
-        wrap((<IQueryOperationResultQuads> action).quadStream)
-          .map(element => JSON.stringify(RdfString.quadToStringQuad(element)));
+          .map(element => this.bindingsToString(element)) :
+          (
+            action.type === 'quads' ?
+              wrap((<IQueryOperationResultQuads> action).quadStream)
+                .map(element => JSON.stringify(RdfString.quadToStringQuad(element))) :
+              wrap((<IQueryOperationResultPaths> action).pathStream)
+                .map(path => `[${path.nodes().map(node => this.bindingsToString(node)).join(',')}]`)
+          );
 
       let empty = true;
       stream = stream.map((element) => {
@@ -62,24 +67,6 @@ export class ActorQueryResultSerializeJson extends ActorQueryResultSerializeFixe
       }).prepend([ '[' ]).append([ '\n]\n' ]);
 
       data.wrap(<any> stream);
-    } else if (action.type === 'paths' ) {
-      let stream = (<IQueryOperationResultPaths> action).pathStream;
-      let paths;
-      while (paths = stream.read()) {
-        data.push(`\n[\n`)
-        paths.nodes().forEach(bs => {
-          var str = `[ `;
-          bs.forEach(b => {
-            str += `${b.value}, `
-          })
-          str += ']\n';
-          data.push(str);
-        })
-        data.push(`]\n`)
-      }
-
-      data.push(null);
-
     } else {
       try {
         data.push(`${JSON.stringify(await (<IQueryOperationResultBoolean> action).execute())}\n`);
@@ -90,5 +77,10 @@ export class ActorQueryResultSerializeJson extends ActorQueryResultSerializeFixe
     }
 
     return { data };
+  }
+
+  private bindingsToString(bindings: Bindings): string {
+    return JSON.stringify(Object.fromEntries([ ...bindings ]
+      .map(([ key, value ]) => [ key.value, RdfString.termToString(value) ])));
   }
 }
