@@ -30,9 +30,9 @@
     "build": "node \"../../node_modules/typescript/bin/tsc\""
   },
   "dependencies": {
-    "@comunica/core": "^3.2.0",
-    "@comunica/types": "^3.2.0",
-    "@rdfjs/types": "*",
+    "@comunica/core": "^3.2.1",
+    "@comunica/types": "^3.2.1",
+    "@rdfjs/types": "1.1.0",
     "immutable": "^4.1.0",
     "rdf-data-factory": "^1.1.1",
     "rdf-string": "^1.6.1"

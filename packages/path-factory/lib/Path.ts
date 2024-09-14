@@ -6,9 +6,9 @@ import type * as RDF from '@rdfjs/types';
  */
 export class Path implements RDF.Path {
   public readonly type = 'path';
-  private readonly entries: Array<Bindings>;
+  private readonly entries: Bindings[];
 
-  public constructor(entries: Array<Bindings>) {
+  public constructor(entries: Bindings[]) {
     this.entries = entries;
   }
 
@@ -31,17 +31,14 @@ export class Path implements RDF.Path {
 
   public [Symbol.iterator](): Iterator<Bindings> {
     let index = 0;
-    let data = this.entries;
-
+    const data = this.entries;
     return {
       next(): IteratorResult<Bindings> {
         if (index < data.length) {
           return { value: data[index++], done: false };
-        } else {
-          return { value: undefined, done: true };
         }
-      }
+        return { value: undefined, done: true };
+      },
     };
   }
-
 }
