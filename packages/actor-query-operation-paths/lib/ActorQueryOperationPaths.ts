@@ -2,19 +2,24 @@ import { BindingsFactory } from '@comunica/bindings-factory';
 import type { MediatorOptimizeQueryOperation } from '@comunica/bus-optimize-query-operation';
 import type { IActorQueryOperationTypedMediatedArgs } from '@comunica/bus-query-operation';
 import { ActorQueryOperationTypedMediated } from '@comunica/bus-query-operation';
+import type { MediatorRdfJoin } from '@comunica/bus-rdf-join';
 import type { IActorTest } from '@comunica/core';
+import { MetadataValidationState } from '@comunica/metadata';
 import { Path } from '@comunica/path-factory';
-import type { BindingsStream, IActionContext, IJoinEntry, IQueryOperationResult, IQueryOperationResultBindings, IQueryOperationResultPaths, PathStream } from '@comunica/types';
+import type {
+  IActionContext,
+  IJoinEntry,
+  IQueryOperationResultBindings,
+  IQueryOperationResultPaths,
+  PathStream,
+} from '@comunica/types';
 import type * as RDF from '@rdfjs/types';
 import type { AsyncIterator } from 'asynciterator';
-import { ArrayIterator, EmptyIterator, MultiTransformIterator, SimpleTransformIterator, wrap } from 'asynciterator';
+import { ArrayIterator, EmptyIterator, MultiTransformIterator, SimpleTransformIterator } from 'asynciterator';
 import type { Variable } from 'rdf-data-factory';
 import { DataFactory } from 'rdf-data-factory';
 import { Factory, type Algebra } from 'sparqlalgebrajs';
 import type { Operation } from 'sparqlalgebrajs/lib/algebra';
-import { Utils } from './Utils';
-import { IActionRdfJoin, MediatorRdfJoin } from '@comunica/bus-rdf-join';
-import { MetadataValidationState } from '@comunica/metadata';
 
 /**
  * A [Query Operation](https://github.com/comunica/comunica/tree/master/packages/bus-query-operation) actor that handles SPARQL paths operations.
@@ -41,10 +46,13 @@ export class ActorQueryOperationPaths extends ActorQueryOperationTypedMediated<A
     // eslint-disable-next-line prefer-const
     let startPattern: Operation = this.AF.createNop();
     if (operation.start.input) {
-      if ('termType' in operation.start.input) {
-        const iri = operation.start.input;
+      if (operation.start.input.type === 'NamedNode') {
+        const iri = operation.start.input.value;
         startBindings = this.AF.createValues([ operation.start.variable ], [{ [`?${operation.start.variable.value}`]: iri }]);
       } else {
+        //const ps = operation.start.input;
+        //ps.map(item => item.)
+        //this.AF.createJoin(ps);
         //startPattern = this.AF.createBgp(operation.start.input);
         throw new Error('unimplemented');
       }
@@ -54,8 +62,8 @@ export class ActorQueryOperationPaths extends ActorQueryOperationTypedMediated<A
     // eslint-disable-next-line prefer-const
     let endPattern: Operation = this.AF.createNop();
     if (operation.end.input) {
-      if ('termType' in operation.end.input) {
-        const iri = operation.end.input;
+      if (operation.end.input.type === 'NamedNode') {
+        const iri = operation.end.input.value;
         endBindings = this.AF.createValues([ operation.end.variable ], [{ [`?${operation.end.variable.value}`]: iri }]);
       } else {
         //endPattern = this.AF.createBgp(operation.end.input);
@@ -83,32 +91,20 @@ export class ActorQueryOperationPaths extends ActorQueryOperationTypedMediated<A
     }
     const startJoinEntry = { output: startResult, operation: optimizedStart.operation };
     const endJoinEntry = { output: endResult, operation: endBindings };
-    const fakeMaxLength = 3;
     const output = await this.queryHop(
       operation,
       startJoinEntry,
       viaOperation,
       endJoinEntry,
       1,
-      fakeMaxLength,
+      operation.maxLength,
+      operation.limit,
+      operation.offset,
       new Map(),
+      operation.shortest ? new Set() : undefined,
       context,
     );
     return { type: 'paths', pathStream: output };
-  }
-
-  private async queryHopOld(start: Operation, via: Operation, context: IActionContext):
-  Promise<BindingsStream> {
-    const join = this.AF.createJoin([ start, via ], true);
-    // Make sure pattern gets sources assigned
-    const optimized = await this.mediatorOptimizeQueryOperation.mediate({ operation: join, context });
-    // Execute query
-    const results = await this.mediatorQueryOperation
-      .mediate({ operation: optimized.operation, context: optimized.context });
-    if (results.type === 'bindings') {
-      return results.bindingsStream;
-    }
-    throw new Error('Unexpected query execution');
   }
 
   private async queryHop(
@@ -118,15 +114,18 @@ export class ActorQueryOperationPaths extends ActorQueryOperationTypedMediated<A
     _end: IJoinEntry,
     depth: number,
     maxLength: number | undefined,
-    openPaths: Map<GraphNode, PathBuilder[]>,
+    limit: number | undefined,
+    offset: number | undefined,
+    openPaths: Map<string, PathBuilder[]>,
+    knownShortest: Set<string> | undefined,
     context: IActionContext,
   ): Promise<PathStream> {
     let endBindings: Operation = this.AF.createNop();
     // eslint-disable-next-line prefer-const
     let endPattern: Operation = this.AF.createNop();
     if (operation.end.input) {
-      if ('termType' in operation.end.input) {
-        const iri = operation.end.input;
+      if (operation.end.input.type === 'NamedNode') {
+        const iri = operation.end.input.value;
         endBindings = this.AF.createValues([ operation.end.variable ], [{ [`?${operation.end.variable.value}`]: iri }]);
       } else {
         //endPattern = this.AF.createBgp(operation.end.input);
@@ -141,10 +140,6 @@ export class ActorQueryOperationPaths extends ActorQueryOperationTypedMediated<A
       throw new Error('unexpected query result');
     }
     const endJoinEntry: IJoinEntry = { output: endResult, operation: endBindings };
-
-
-    console.log(`MAX LENGTH: ${maxLength}`);
-    console.log(`DEPTH: ${depth}`);
     if (maxLength && depth > maxLength) {
       return new EmptyIterator();
     }
@@ -172,13 +167,13 @@ export class ActorQueryOperationPaths extends ActorQueryOperationTypedMediated<A
     // const results = await this.mediatorQueryOperation
     //   .mediate({ operation: optimized.operation, context: optimized.context });
     if (results.type === 'bindings') {
-      // OLD return { output: results, operation: optimized.operation };
       const allBindings = await results.bindingsStream.toArray();
-      console.log(`allBindings length: ${allBindings.length}`);
+      console.error(`allBindings length: ${allBindings.length}`);
       if (allBindings.length === 0) {
         return new EmptyIterator();
       }
       const newOpenPaths: PathBuilder[] = [];
+      const newKnownShortest: Set<string> | undefined = knownShortest ? new Set(knownShortest) : undefined;
       for (const bindings of allBindings) {
         const start = bindings.get(operation.start.variable);
         const end = bindings.get(operation.end.variable);
@@ -186,30 +181,43 @@ export class ActorQueryOperationPaths extends ActorQueryOperationTypedMediated<A
           (start.termType === 'NamedNode' || start.termType === 'BlankNode') &&
           (end.termType === 'NamedNode' || end.termType === 'BlankNode')) {
           if (depth === 1) {
+            if (newKnownShortest) {
+              const endpoints = `start: ${start.value} end: ${end.value}`;
+              newKnownShortest.add(endpoints);
+            }
             newOpenPaths.push(new PathBuilder(
               operation.start.variable,
               operation.end.variable,
+              start,
               end,
               [ bindings ],
-              new Set([ start, end ]),
+              new Set([ start.value, end.value ]),
             ));
           } else {
-            const linkablePaths = openPaths.get(start) ?? [];
+            const linkablePaths = openPaths.get(start.value) ?? [];
             for (const linkablePath of linkablePaths) {
               const extended = linkablePath.extend(bindings);
               if (extended) {
-                newOpenPaths.push(extended);
+                const endpoints = `start: ${extended.startpoint.value} end: ${extended.endpoint.value}`;
+                const alreadyKnownShortest = knownShortest ? knownShortest.has(endpoints) : false;
+                const cyclic = extended.startpoint.value === extended.endpoint.value;
+                if (!alreadyKnownShortest && !cyclic) {
+                  newOpenPaths.push(extended);
+                  if (newKnownShortest) {
+                    newKnownShortest.add(endpoints);
+                  }
+                }
               }
             }
           }
         }
       }
-      const newOpenPathsMap = new Map<GraphNode, PathBuilder[]>();
+      const newOpenPathsMap = new Map<string, PathBuilder[]>();
       for (const openPath of newOpenPaths) {
-        if (newOpenPathsMap.has(openPath.endpoint)) {
-          newOpenPathsMap.get(openPath.endpoint)?.push(openPath);
+        if (newOpenPathsMap.has(openPath.endpoint.value)) {
+          newOpenPathsMap.get(openPath.endpoint.value)?.push(openPath);
         } else {
-          newOpenPathsMap.set(openPath.endpoint, [ openPath ]);
+          newOpenPathsMap.set(openPath.endpoint.value, [ openPath ]);
         }
       }
       const joinForEnd: IJoinEntry = {
@@ -233,14 +241,22 @@ export class ActorQueryOperationPaths extends ActorQueryOperationTypedMediated<A
             (start.termType === 'NamedNode' || start.termType === 'BlankNode') &&
             (end.termType === 'NamedNode' || end.termType === 'BlankNode')) {
             const returnablePaths: RDF.Path[] = [];
-            if (depth === 1) {
+            if (depth === 1 && (!operation.cyclic ||
+              (operation.cyclic && (start.value === end.value)))) {
               returnablePaths.push(new Path([ bindings ]));
             } else {
-              const linkablePaths = openPaths.get(start) ?? [];
+              const linkablePaths = openPaths.get(start.value) ?? [];
               for (const linkablePath of linkablePaths) {
                 const extended = linkablePath.extend(bindings);
                 if (extended) {
-                  returnablePaths.push(extended.toPath());
+                  const endpoints = `start: ${extended.startpoint.value} end: ${extended.endpoint.value}`;
+                  const alreadyKnownShortest = knownShortest ? knownShortest.has(endpoints) : false;
+                  if (
+                    !alreadyKnownShortest &&
+                    (!operation.cyclic ||
+                      (operation.cyclic && (extended.startpoint.value === extended.endpoint.value)))) {
+                    returnablePaths.push(extended.toPath());
+                  }
                 }
               }
             }
@@ -250,8 +266,9 @@ export class ActorQueryOperationPaths extends ActorQueryOperationTypedMediated<A
         },
         });
       const newStartNodesBindings: RDF.Bindings[] = [];
-      for (const endNode of newOpenPathsMap.keys()) {
-        newStartNodesBindings.push(this.BF.bindings([[ operation.start.variable, endNode ]]));
+      for (const endpointGroup of newOpenPathsMap.entries()) {
+        const endpoint = endpointGroup[1][0].endpoint;
+        newStartNodesBindings.push(this.BF.bindings([[ operation.start.variable, endpoint ]]));
       }
       let newStartPattern: Operation = this.AF.createNop();
       const newStartNodesJoinEntry: IJoinEntry = {
@@ -278,11 +295,17 @@ export class ActorQueryOperationPaths extends ActorQueryOperationTypedMediated<A
           _end,
           depth + 1,
           maxLength,
+          undefined,
+          undefined,
           newOpenPathsMap,
+          newKnownShortest,
           context,
         ),
       );
-      return currentOutput.append(nextOutput);
+      if (limit) {
+        return currentOutput.append(nextOutput).skip(offset ?? 0).take(limit);
+      }
+      return currentOutput.append(nextOutput).skip(offset ?? 0);
     }
     throw new Error('Unexpected query execution');
   }
@@ -294,135 +317,7 @@ export class ActorQueryOperationPaths extends ActorQueryOperationTypedMediated<A
     if (via.type === 'Path') {
       return this.AF.createPath(start, via.value, end);
     }
-    throw new Error('unimplemented');
-  }
-
-  private bindingsToValues(bindings: RDF.Bindings): Algebra.Values {
-    const values: { [key: string]: RDF.Literal | RDF.NamedNode}[] = [];
-    // eslint-disable-next-line unicorn/no-array-for-each
-    bindings.forEach((value, variable) => {
-      //values.push({ [`?${variable.value}`]: value });
-    });
-    return this.AF.createValues([ ...bindings.keys() ], values);
-  }
-
-  private pathValue(pathValue: any): RDF.Term {
-    if (pathValue.value && !Array.isArray(pathValue.value)) {
-      return pathValue.value.value.value;
-    }
-    throw new Error('Pathfinder cannot process graph patterns yet.');
-  }
-
-  private async paths(start: RDF.Term, via: RDF.Term, end: RDF.Term, operation: Algebra.Operation, utils: Utils):
-  Promise<RDF.Path[]> {
-    const DF = new DataFactory();
-    const BF = new BindingsFactory();
-
-    // Initialize data structures
-    const traversed = new Set<RDF.Term>();
-    const queue: [RDF.Term, RDF.Bindings[]][] = [[ start, []]];
-    const pathsArr: RDF.Path[] = [];
-
-    // Loop while there are nodes to process in the queue.
-    while (queue.length > 0) {
-      const [ currentNode, path ] = queue.shift()!;
-      // Query for all neighboring nodes of the current node.
-      const outgoingEdges = (await utils.query(currentNode, via)) || [];
-      for (const neighborBinding of outgoingEdges) {
-        // Get the neighbor node from the binding and skip if undefined.
-        const neighbor = neighborBinding.get('o');
-        if (!neighbor) {
-          continue;
-        }
-        const order = BF.bindings([
-          [ DF.variable('s'), neighborBinding.get('s') ?? DF.namedNode('s') ],
-          [ DF.variable('p'), neighborBinding.get('p') ?? DF.namedNode('p') ],
-          [ DF.variable('o'), neighborBinding.get('o') ?? DF.namedNode('o') ],
-        ]);
-        const newPath = [ ...path, order ];
-        // Create a new path including the current neighborBinding.
-        // const newPath = [...path, neighborBinding];
-        // Check if the neighbor node is the target end node.
-        if (end.termType === 'NamedNode' && neighbor.value === end.value) {
-          pathsArr.push(new Path(newPath));
-          // If we only want the shortest path, return immediately.
-          if (operation.all !== true) {
-            return pathsArr;
-          }
-        } else if (neighbor.termType !== 'Literal' && (!traversed.has(neighbor) || operation.all === true)) {
-          // If the neighbor is not a literal and has not been traversed,
-          // or if we want all paths, add the neighbor to the queue for further processing.
-          queue.push([ neighbor, newPath ]);
-        }
-      }
-      // Mark the current node as traversed.
-      traversed.add(currentNode);
-    }
-    // Return all found paths.
-    return pathsArr;
-  }
-
-  private async cyclicPaths(startNode: RDF.Term, via: RDF.Term, endNode: RDF.Term, utils: Utils): Promise<RDF.Path[]> {
-    // Initialize data structures
-    const traversed = new Set<string>();
-    const pathArr: RDF.Bindings[] = [];
-    const pathsArr: RDF.Path[] = [];
-
-    async function dfs(node: RDF.Term, end?: RDF.Term, neighborBinding?: RDF.Bindings): Promise<void> {
-      // If a neighborBinding is provided, push it to the path array.
-      neighborBinding && pathArr.push(neighborBinding);
-      // If the current node has already been traversed.
-      if (traversed.has(node.value)) {
-        // If there is an end node specified and the current node is the end node OR if end node doesnt matter,
-        // push a copy of pathArr to the pathsArr.
-        if ((end && node.equals(end)) ?? !end) {
-          pathsArr.push(new Path([ ...pathArr ]));
-        }
-        // Remove the last element from pathArr since we are backtracking.
-        pathArr.pop();
-        return;
-      }
-      // Mark the current node as traversed.
-      traversed.add(node.value);
-      try {
-        // Query for all outgoing edges from the current node.
-        const outgoingEdges = await utils.query(node, via) || [];
-        // Process each outgoing edge (neighbor).
-        for (const neighborBinding of outgoingEdges) {
-          const neighborTerm = neighborBinding.get('o');
-          // If the neighboring node exists, recursively call dfs on it.
-          if (neighborTerm) {
-            await dfs(neighborTerm, end, neighborBinding);
-          }
-        }
-      } catch (error) {
-        console.error("Error in DFS:", error);
-      } finally {
-        // Remove the last element from pathArr since we are backtracking.
-        pathArr.pop();
-        // Remove the current node from traversed set to allow revisiting it in different paths.
-        traversed.delete(node.value);
-      }
-    }
-    if (startNode.termType === 'NamedNode' && endNode.termType === 'NamedNode') {
-      // If start node is specified, only search from that node
-      await dfs(startNode);
-      return pathsArr;
-    }
-    // // Otherwise, search from all nodes
-    // for (const node in graph) {
-    //   if (!traversed.has(node)) {
-    //     dfs(node, []);
-    //   }
-    // }
-    return pathsArr;
-  }
-
-  private isGraphNode(node: RDF.Term | undefined): boolean {
-    if (node) {
-      return node.termType === 'NamedNode' || node.termType === 'BlankNode';
-    }
-    return false;
+    return via.value;
   }
 }
 type GraphNode = RDF.NamedNode | RDF.BlankNode;
@@ -430,37 +325,39 @@ type GraphNode = RDF.NamedNode | RDF.BlankNode;
 class PathBuilder {
   private readonly startVar: Variable;
   private readonly endVar: Variable;
-  private readonly seenNodes: Set<GraphNode> = new Set();
+  private readonly seenNodes: Set<string> = new Set();
   private readonly steps: RDF.Bindings[] = [];
+  public readonly startpoint: GraphNode;
   public readonly endpoint: GraphNode;
   public constructor(
     start: Variable,
     end: Variable,
+    startpoint: GraphNode,
     endpoint: GraphNode,
     steps: RDF.Bindings[],
-    seen: Set<RDF.NamedNode | RDF.BlankNode>,
+    seen: Set<string>,
   ) {
     this.startVar = start;
     this.endVar = end;
+    this.startpoint = startpoint;
     this.endpoint = endpoint;
     this.steps = steps;
     this.seenNodes = seen;
   }
 
   public extend(bindings: RDF.Bindings): PathBuilder | undefined {
-    const maybeStart = this.steps[0]?.get(this.startVar);
     const maybeEnd = bindings.get(this.endVar);
-    if (maybeStart && maybeEnd && (maybeEnd.termType === 'NamedNode' || maybeEnd.termType === 'BlankNode')) {
-      if (this.seenNodes.has(maybeEnd) && maybeStart !== maybeEnd) {
+    if (maybeEnd && (maybeEnd.termType === 'NamedNode' || maybeEnd.termType === 'BlankNode')) {
+      if (this.seenNodes.has(maybeEnd.value) && this.startpoint.value !== maybeEnd.value) {
         return undefined;
       }
-      const newSeen: Set<GraphNode> = new Set();
-      newSeen.add(maybeEnd);
+      const newSeen: Set<string> = new Set();
+      newSeen.add(maybeEnd.value);
       for (const node of this.seenNodes.keys()) {
         newSeen.add(node);
       }
       const newSteps: RDF.Bindings[] = [ ...this.steps, bindings ];
-      return new PathBuilder(this.startVar, this.endVar, maybeEnd, newSteps, newSeen);
+      return new PathBuilder(this.startVar, this.endVar, this.startpoint, maybeEnd, newSteps, newSeen);
     }
   }
 
