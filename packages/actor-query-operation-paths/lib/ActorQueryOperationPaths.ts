@@ -42,36 +42,27 @@ export class ActorQueryOperationPaths extends ActorQueryOperationTypedMediated<A
 
   public async runOperation(operation: Algebra.Paths, context: IActionContext):
   Promise<IQueryOperationResultPaths> {
-    let startBindings: Operation = this.AF.createNop();
-    // eslint-disable-next-line prefer-const
     let startPattern: Operation = this.AF.createNop();
     if (operation.start.input) {
       if (operation.start.input.type === 'NamedNode') {
         const iri = operation.start.input.value;
-        startBindings = this.AF.createValues([ operation.start.variable ], [{ [`?${operation.start.variable.value}`]: iri }]);
+        startPattern = this.AF.createValues([ operation.start.variable ], [{ [`?${operation.start.variable.value}`]: iri }]);
       } else {
-        //const ps = operation.start.input;
-        //ps.map(item => item.)
-        //this.AF.createJoin(ps);
-        //startPattern = this.AF.createBgp(operation.start.input);
-        throw new Error('unimplemented');
+        startPattern = operation.start.input.value;
       }
     }
-    let endBindings: Operation = this.AF.createNop();
-    //this.AF.createJoin
     // eslint-disable-next-line prefer-const
     let endPattern: Operation = this.AF.createNop();
     if (operation.end.input) {
       if (operation.end.input.type === 'NamedNode') {
         const iri = operation.end.input.value;
-        endBindings = this.AF.createValues([ operation.end.variable ], [{ [`?${operation.end.variable.value}`]: iri }]);
+        endPattern = this.AF.createValues([ operation.end.variable ], [{ [`?${operation.end.variable.value}`]: iri }]);
       } else {
-        //endPattern = this.AF.createBgp(operation.end.input);
-        throw new Error('unimplemented');
+        endPattern = operation.end.input.value;
       }
     }
     const viaOperation = this.expandVia(operation.via, operation.start.variable, operation.end.variable);
-    const optimizedStart = await this.mediatorOptimizeQueryOperation.mediate({ operation: startBindings, context });
+    const optimizedStart = await this.mediatorOptimizeQueryOperation.mediate({ operation: startPattern, context });
     //const start = await this.mediatorQueryOperation.mediate({ operation: startBindings, context });
     const start = await this.mediatorQueryOperation.mediate(
       { operation: optimizedStart.operation, context: optimizedStart.context },
@@ -82,7 +73,7 @@ export class ActorQueryOperationPaths extends ActorQueryOperationTypedMediated<A
     } else {
       throw new Error('unexpected query result');
     }
-    const end = await this.mediatorQueryOperation.mediate({ operation: endBindings, context });
+    const end = await this.mediatorQueryOperation.mediate({ operation: endPattern, context });
     let endResult: IQueryOperationResultBindings;
     if (end.type === 'bindings') {
       endResult = end;
@@ -90,7 +81,7 @@ export class ActorQueryOperationPaths extends ActorQueryOperationTypedMediated<A
       throw new Error('unexpected query result');
     }
     const startJoinEntry = { output: startResult, operation: optimizedStart.operation };
-    const endJoinEntry = { output: endResult, operation: endBindings };
+    const endJoinEntry = { output: endResult, operation: endPattern };
     const output = await this.queryHop(
       operation,
       startJoinEntry,
@@ -120,26 +111,23 @@ export class ActorQueryOperationPaths extends ActorQueryOperationTypedMediated<A
     knownShortest: Set<string> | undefined,
     context: IActionContext,
   ): Promise<PathStream> {
-    let endBindings: Operation = this.AF.createNop();
-    // eslint-disable-next-line prefer-const
     let endPattern: Operation = this.AF.createNop();
     if (operation.end.input) {
       if (operation.end.input.type === 'NamedNode') {
         const iri = operation.end.input.value;
-        endBindings = this.AF.createValues([ operation.end.variable ], [{ [`?${operation.end.variable.value}`]: iri }]);
+        endPattern = this.AF.createValues([ operation.end.variable ], [{ [`?${operation.end.variable.value}`]: iri }]);
       } else {
-        //endPattern = this.AF.createBgp(operation.end.input);
-        throw new Error('unimplemented');
+        endPattern = operation.end.input.value;
       }
     }
-    const end = await this.mediatorQueryOperation.mediate({ operation: endBindings, context });
+    const end = await this.mediatorQueryOperation.mediate({ operation: endPattern, context });
     let endResult: IQueryOperationResultBindings;
     if (end.type === 'bindings') {
       endResult = end;
     } else {
       throw new Error('unexpected query result');
     }
-    const endJoinEntry: IJoinEntry = { output: endResult, operation: endBindings };
+    const endJoinEntry: IJoinEntry = { output: endResult, operation: endPattern };
     if (maxLength && depth > maxLength) {
       return new EmptyIterator();
     }
@@ -160,12 +148,6 @@ export class ActorQueryOperationPaths extends ActorQueryOperationTypedMediated<A
     const results = await this.mediatorRdfJoin.mediate(
       { type: 'inner', entries: [ start, joinForVia ], context },
     );
-    //const join = this.AF.createJoin([ start, via ], true);
-    // Make sure pattern gets sources assigned
-    //const optimized = await this.mediatorOptimizeQueryOperation.mediate({ operation: join, context });
-    // Execute query
-    // const results = await this.mediatorQueryOperation
-    //   .mediate({ operation: optimized.operation, context: optimized.context });
     if (results.type === 'bindings') {
       const allBindings = await results.bindingsStream.toArray();
       console.error(`allBindings length: ${allBindings.length}`);
@@ -270,7 +252,6 @@ export class ActorQueryOperationPaths extends ActorQueryOperationTypedMediated<A
         const endpoint = endpointGroup[1][0].endpoint;
         newStartNodesBindings.push(this.BF.bindings([[ operation.start.variable, endpoint ]]));
       }
-      let newStartPattern: Operation = this.AF.createNop();
       const newStartNodesJoinEntry: IJoinEntry = {
         output: {
           type: 'bindings',
