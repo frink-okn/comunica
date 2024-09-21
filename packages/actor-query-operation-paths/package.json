@@ -37,10 +37,14 @@
     "build:components": "componentsjs-generator"
   },
   "dependencies": {
+    "@comunica/bindings-factory": "^3.2.1",
     "@comunica/bus-query-operation": "^3.1.2",
     "@comunica/core": "^3.1.0",
+    "@comunica/metadata": "^3.2.1",
     "@comunica/path-factory": "^1.0.0",
     "@comunica/types": "^3.2.1",
+    "asynciterator": "^3.9.0",
+    "rdf-data-factory": "^1.1.2",
     "sparqlalgebrajs": "^4.3.8"
   }
 }

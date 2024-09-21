@@ -268,7 +268,7 @@ implements IQueryEngine<QueryStringContextInner, QueryAlgebraContextInner> {
         return {
           type: 'paths',
           pathStream: <PathStream> await finalResult.execute(),
-          // metadata: async() => <any> await finalResult.metadata(),
+          // TODO metadata: async() => <any> await finalResult.metadata(),
         };
       case 'quads':
         return {

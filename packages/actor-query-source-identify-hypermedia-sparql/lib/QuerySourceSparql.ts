@@ -132,25 +132,7 @@ export class QuerySourceSparql implements IQuerySource {
 
   // TODO
   public queryPaths(_operation: Algebra.Operation, _context: IActionContext): PathStream {
-    // let operationPromise: Promise<Algebra.Operation> = Promise.resolve(operationIn);
-
-    // const paths: PathStream = new TransformIterator(async() => {
-    //   // Prepare queries
-    //   const operation = await operationPromise;
-    //   const variables: RDF.Variable[] = Util.inScopeVariables(operation);
-    //   const selectQuery: string = QuerySourceSparql.operationToSelectQuery(operation, variables);
-
-    //   return this.queryBindingsRemote(this.url, selectQuery, variables, context);
-    // }, { autoStart: false });
-    // this.attachMetadata(paths, context, operationPromise);
-
-    // this.lastSourceContext = this.context.merge(context);
-    // const promise = this.endpointFetcher.fetchPaths(
-    //   this.url,
-    //   context.get(KeysInitQuery.queryString) ?? QuerySourceSparql.operationToQuery(operation),
-    // );
-    // this.lastSourceContext = undefined;
-    throw new Error("Paths have not been implemented to query sparql sources yet.")
+    throw new Error('Paths have not been implemented to query sparql sources yet.');
   }
 
   public queryQuads(operation: Algebra.Operation, context: IActionContext): AsyncIterator<RDF.Quad> {

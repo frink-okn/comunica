@@ -18,11 +18,12 @@ $ yarn add @comunica/actor-query-operation-paths
 ## Configure
 
 After installing, this package can be added to your engine's configuration as follows:
+
 ```text
 {
   "@context": [
     ...
-    "https://linkedsoftwaredependencies.org/bundles/npm/@comunica/actor-query-operation-paths/^1.0.0/components/context.jsonld"  
+    "https://linkedsoftwaredependencies.org/bundles/npm/@comunica/actor-query-operation-paths/^1.0.0/components/context.jsonld"
   ],
   "actors": [
     ...
@@ -39,4 +40,4 @@ After installing, this package can be added to your engine's configuration as fo
 
 TODO: fill in parameters (this section can be removed if there are none)
 
-* `mediatorQueryOperation`: A mediator over the [Query Operation bus](https://github.com/comunica/comunica/tree/master/packages/bus-query-operation).
+- `mediatorQueryOperation`: A mediator over the [Query Operation bus](https://github.com/comunica/comunica/tree/master/packages/bus-query-operation).

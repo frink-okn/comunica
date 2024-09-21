@@ -1,10 +1,9 @@
+import { ActorQueryOperation } from '@comunica/bus-query-operation';
 import { ActionContext, Bus } from '@comunica/core';
 import { ArrayIterator } from 'asynciterator';
-import { ActorQueryOperationPaths } from '../lib/ActorQueryOperationPaths';
-import { ActorQueryOperation } from '@comunica/bus-query-operation';
-import { Algebra } from 'sparqlalgebrajs';
 import { DataFactory } from 'rdf-data-factory';
-import { Path } from '@comunica/path-factory';
+import { Algebra } from 'sparqlalgebrajs';
+import { ActorQueryOperationPaths } from '../lib/ActorQueryOperationPaths';
 
 const DF = new DataFactory();
 
@@ -58,46 +57,42 @@ describe('ActorQueryOperationPaths', () => {
 
     it('should test on paths', () => {
       const op: any = {
-        operation: { 
-          type: Algebra.types.PATHS, 
-          subject: DF.variable("s"),
-          predicate: DF.literal("s"),
-          object: DF.variable("o"),
+        operation: {
+          type: Algebra.types.PATHS,
+          subject: DF.variable('s'),
+          predicate: DF.literal('s'),
+          object: DF.variable('o'),
         },
         context: new ActionContext(),
       };
-      return expect(actor.test(op)).resolves.toBeTruthy();
-
+      expect(actor.test(op)).resolves.toBeTruthy();
     });
 
     it('should not test on non-paths', () => {
       const op: any = {
         operation: { 
-          type: Algebra.types.CONSTRUCT, 
-          subject: DF.variable("s"),
-          predicate: DF.literal("s"),
-          object: DF.variable("o"),
+          type: Algebra.types.CONSTRUCT,
+          subject: DF.variable('s'),
+          predicate: DF.literal('s'),
+          object: DF.variable('o'),
         },
         context: new ActionContext(),
       };
-      return expect(actor.test(op)).rejects.toBeTruthy();
+      expect(actor.test(op)).rejects.toBeTruthy();
     });
 
-    it('should run', async () => {
+    it('should run', async() => {
       const op: any = {
-        operation: { 
-          type: Algebra.types.PATHS, 
-          subject: DF.variable("s"),
-          predicate: DF.literal("p"),
-          object: DF.variable("o"),
+        operation: {
+          type: Algebra.types.PATHS,
+          subject: DF.variable('s'),
+          predicate: DF.literal('p'),
+          object: DF.variable('o'),
         },
         context: new ActionContext(),
       };
       const output = ActorQueryOperation.getSafePaths(await actor.run(op));
-      expect(output.pathStream.toArray()).toEqual([
-        []
-      ]);
-
+      expect(output.pathStream.toArray()).toEqual([[]]);
     });
   });
 });

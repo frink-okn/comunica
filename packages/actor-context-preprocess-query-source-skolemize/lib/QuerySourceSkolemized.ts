@@ -64,7 +64,6 @@ export class QuerySourceSkolemized implements IQuerySource {
       const it: PathStream = new ArrayIterator<RDF.Path>([], { autoStart: false });
       return it;
     }
-    // return skolemizePathsStream(this.innerSource.queryPaths(operationMapped, context), this.sourceId);
     return this.innerSource.queryPaths(operationMapped, context);
   }
 

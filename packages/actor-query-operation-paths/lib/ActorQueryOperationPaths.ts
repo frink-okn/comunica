@@ -51,7 +51,6 @@ export class ActorQueryOperationPaths extends ActorQueryOperationTypedMediated<A
         startPattern = operation.start.input.value;
       }
     }
-    // eslint-disable-next-line prefer-const
     let endPattern: Operation = this.AF.createNop();
     if (operation.end.input) {
       if (operation.end.input.type === 'NamedNode') {
@@ -63,7 +62,6 @@ export class ActorQueryOperationPaths extends ActorQueryOperationTypedMediated<A
     }
     const viaOperation = this.expandVia(operation.via, operation.start.variable, operation.end.variable);
     const optimizedStart = await this.mediatorOptimizeQueryOperation.mediate({ operation: startPattern, context });
-    //const start = await this.mediatorQueryOperation.mediate({ operation: startBindings, context });
     const start = await this.mediatorQueryOperation.mediate(
       { operation: optimizedStart.operation, context: optimizedStart.context },
     );
@@ -150,7 +148,6 @@ export class ActorQueryOperationPaths extends ActorQueryOperationTypedMediated<A
     );
     if (results.type === 'bindings') {
       const allBindings = await results.bindingsStream.toArray();
-      console.error(`allBindings length: ${allBindings.length}`);
       if (allBindings.length === 0) {
         return new EmptyIterator();
       }
