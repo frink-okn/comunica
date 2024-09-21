@@ -174,7 +174,7 @@ export type QueryEnhanced =
 /**
  * Different manners in which a query can be explained.
  */
-export type QueryExplainMode = 'parsed' | 'logical' | 'physical';
+export type QueryExplainMode = 'parsed' | 'logical' | 'physical' | 'physical-json';
 
 /**
  * An interface marking an explained query.

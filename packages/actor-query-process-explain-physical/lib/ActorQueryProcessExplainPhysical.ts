@@ -66,7 +66,7 @@ export class ActorQueryProcessExplainPhysical extends ActorQueryProcess {
     return {
       result: {
         explain: true,
-        type: 'physical',
+        type: mode,
         data: mode === 'physical' ? physicalQueryPlanLogger.toCompactString() : physicalQueryPlanLogger.toJson(),
       },
     };
