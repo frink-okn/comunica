@@ -5,6 +5,7 @@ import { Actor } from '@comunica/core';
 import type {
   IQuerySource,
   BindingsStream,
+  PathStream,
   IActionContext,
   FragmentSelectorShape,
   Bindings,
@@ -127,6 +128,11 @@ export class QuerySourceSparql implements IQuerySource {
     this.attachMetadata(bindings, context, operationPromise);
 
     return bindings;
+  }
+
+  // TODO
+  public queryPaths(_operation: Algebra.Operation, _context: IActionContext): PathStream {
+    throw new Error('Paths have not been implemented to query sparql sources yet.');
   }
 
   public queryQuads(operation: Algebra.Operation, context: IActionContext): AsyncIterator<RDF.Quad> {

@@ -7,6 +7,7 @@ import type {
   IQueryBindingsOptions,
   IQuerySource,
   MetadataBindings,
+  PathStream,
 } from '@comunica/types';
 import type * as RDF from '@rdfjs/types';
 import type { AsyncIterator } from 'asynciterator';
@@ -57,6 +58,10 @@ export class QuerySourceAddSourceAttribution implements IQuerySource {
     inheritMetadata();
 
     return ret;
+  }
+
+  public queryPaths(operation: Algebra.Operation, context: IActionContext): PathStream {
+    return this.innerSource.queryPaths(operation, context);
   }
 
   public queryBoolean(operation: Algebra.Ask, context: IActionContext): Promise<boolean> {

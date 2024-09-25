@@ -102,6 +102,7 @@
     "@comunica/actor-query-operation-path-seq": "^3.2.2",
     "@comunica/actor-query-operation-path-zero-or-more": "^3.2.2",
     "@comunica/actor-query-operation-path-zero-or-one": "^3.2.2",
+    "@comunica/actor-query-operation-paths": "^1.0.0",
     "@comunica/actor-query-operation-project": "^3.2.2",
     "@comunica/actor-query-operation-reduced-hash": "^3.2.2",
     "@comunica/actor-query-operation-service": "^3.2.2",
