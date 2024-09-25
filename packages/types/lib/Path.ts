@@ -11,4 +11,4 @@ export type Path = RDF.Path;
  * A stream of paths.
  * @see Path
  */
-export type PathStream = AsyncIterator<Path> & RDF.ResultStream<Path>;
+export type PathStream = AsyncIterator<RDF.Path> & RDF.ResultStream<RDF.Path>;
