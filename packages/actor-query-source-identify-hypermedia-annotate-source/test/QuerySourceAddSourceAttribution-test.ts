@@ -31,6 +31,15 @@ describe('QuerySourcAddSourceAttribution', () => {
         it.setProperty('metadata', { state: new MetadataValidationState() });
         return it;
       }),
+      queryPaths: <any> jest.fn(() => {
+        const it = new ArrayIterator([[
+          BF.fromRecord({ a: DF.namedNode('a0') }),
+          BF.fromRecord({ a: DF.blankNode('a1') }),
+          BF.fromRecord({ a: DF.quad(DF.namedNode('s'), DF.namedNode('p'), DF.blankNode('a2')) }),
+        ]], { autoStart: false });
+        it.setProperty('metadata', { state: new MetadataValidationState() });
+        return it;
+      }),
       queryBoolean: <any> jest.fn(async() => true),
       queryQuads: <any> jest.fn(() => {
         const it = new ArrayIterator([

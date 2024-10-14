@@ -41,6 +41,17 @@ describe('ActorQueryOperation', () => {
     });
   });
 
+  describe('#getSafePaths', () => {
+    it('should return for paths', () => {
+      expect(() => ActorQueryOperation.getSafePaths(<any>{ type: 'paths' })).not.toThrow();
+    });
+
+    it('should error for non-quads', () => {
+      expect(() => ActorQueryOperation.getSafePaths(<any>{ type: 'no-paths' }))
+        .toThrow(`Invalid query output type: Expected 'paths' but got 'no-paths'`);
+    });
+  });
+
   describe('#getSafeQuads', () => {
     it('should return for quads', () => {
       expect(() => ActorQueryOperation.getSafeQuads(<any>{ type: 'quads' })).not.toThrow();

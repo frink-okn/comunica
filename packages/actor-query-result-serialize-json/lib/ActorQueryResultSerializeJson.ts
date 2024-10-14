@@ -5,9 +5,11 @@ import type {
 } from '@comunica/bus-query-result-serialize';
 import { ActorQueryResultSerializeFixedMediaTypes } from '@comunica/bus-query-result-serialize';
 import type {
+  Bindings,
   IActionContext,
   IQueryOperationResultBindings,
   IQueryOperationResultBoolean,
+  IQueryOperationResultPaths,
   IQueryOperationResultQuads,
 } from '@comunica/types';
 import { wrap } from 'asynciterator';
@@ -32,8 +34,8 @@ export class ActorQueryResultSerializeJson extends ActorQueryResultSerializeFixe
   }
 
   public override async testHandleChecked(action: IActionSparqlSerialize, _context: IActionContext): Promise<boolean> {
-    if (![ 'bindings', 'quads', 'boolean' ].includes(action.type)) {
-      throw new Error('This actor can only handle bindings or quad streams.');
+    if (![ 'bindings', 'paths', 'quads', 'boolean' ].includes(action.type)) {
+      throw new Error('This actor can only handle bindings, path, or quad streams.');
     }
     return true;
   }
@@ -45,13 +47,17 @@ export class ActorQueryResultSerializeJson extends ActorQueryResultSerializeFixe
       // Do nothing
     };
 
-    if (action.type === 'bindings' || action.type === 'quads') {
+    if (action.type === 'bindings' || action.type === 'quads' || action.type === 'paths') {
       let stream = action.type === 'bindings' ?
         wrap((<IQueryOperationResultBindings> action).bindingsStream)
-          .map(element => JSON.stringify(Object.fromEntries([ ...element ]
-            .map(([ key, value ]) => [ key.value, RdfString.termToString(value) ])))) :
-        wrap((<IQueryOperationResultQuads> action).quadStream)
-          .map(element => JSON.stringify(RdfString.quadToStringQuad(element)));
+          .map(element => this.bindingsToString(element)) :
+          (
+            action.type === 'quads' ?
+              wrap((<IQueryOperationResultQuads> action).quadStream)
+                .map(element => JSON.stringify(RdfString.quadToStringQuad(element))) :
+              wrap((<IQueryOperationResultPaths> action).pathStream)
+                .map(path => `[${path.nodes().map(node => this.bindingsToString(node)).join(',')}]`)
+          );
 
       let empty = true;
       stream = stream.map((element) => {
@@ -71,5 +77,10 @@ export class ActorQueryResultSerializeJson extends ActorQueryResultSerializeFixe
     }
 
     return { data };
+  }
+
+  private bindingsToString(bindings: Bindings): string {
+    return JSON.stringify(Object.fromEntries([ ...bindings ]
+      .map(([ key, value ]) => [ key.value, RdfString.termToString(value) ])));
   }
 }

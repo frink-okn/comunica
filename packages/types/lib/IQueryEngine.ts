@@ -6,6 +6,7 @@ import type { IActionContext } from './IActionContext';
 import type { QueryAlgebraContext, QueryStringContext } from './IQueryContext';
 import type { IQueryExplained, QueryEnhanced, QueryExplainMode } from './IQueryOperationResult';
 import type { QuerySourceUnidentified } from './IQuerySource';
+import type { PathStream } from './Path';
 
 export type QueryFormatType = string | Algebra.Operation;
 export type SourceType = QuerySourceUnidentified;
@@ -32,6 +33,16 @@ export interface IQueryEngine<
     query: QueryFormatTypeInner,
     context?: QueryFormatTypeInner extends string ? QueryStringContextInner : QueryAlgebraContextInner,
   ) => Promise<BindingsStream>;
+
+  /**
+   * Query the bindings results of a PATHS query.
+   * @param query A query string or algebra object.
+   * @param context A context.
+   */
+  queryPaths: <QueryFormatTypeInner extends QueryFormatType>(
+    query: QueryFormatTypeInner,
+    context?: QueryFormatTypeInner extends string ? QueryStringContextInner : QueryAlgebraContextInner,
+  ) => Promise<PathStream>;
 
   /**
    * Query the quad results of a CONSTRUCT or DESCRIBE query.
