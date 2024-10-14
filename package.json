@@ -5,9 +5,7 @@
   "workspaces": [
     "engines/*",
     "packages/*",
-    "performance/*",
-    ".yalc/*",
-    ".yalc/@*/*"
+    "performance/*"
   ],
   "scripts": {
     "test-changed": "lerna run test --since HEAD",
@@ -87,7 +85,7 @@
     "rdf-test-suite": "^1.25.0",
     "rdf-test-suite-ldf": "^1.5.0",
     "setup-polly-jest": "^0.11.0",
-    "sparqlalgebrajs": "^4.3.8",
+    "sparqlalgebrajs": "4.3.800",
     "streamify-array": "^1.0.1",
     "ts-jest": "^29.0.5",
     "ts-loader": "^9.4.1",
@@ -98,8 +96,8 @@
   },
   "resolutions": {
     "@comunica/types": "^3.2.1",
-    "@rdfjs/types": "1.1.0",
-    "sparqlalgebrajs": "^4.3.8",
-    "sparqljs": "^3.7.3"
+    "@rdfjs/types": "1.1.100",
+    "sparqlalgebrajs": "4.3.800",
+    "sparqljs": "3.7.300"
   }
 }
