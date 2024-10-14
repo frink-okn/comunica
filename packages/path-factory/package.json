@@ -1,6 +1,6 @@
 {
   "name": "@comunica/path-factory",
-  "version": "1.0.0",
+  "version": "3.2.300",
   "description": "Path factory module for Comunica",
   "repository": {
     "type": "git",
@@ -30,8 +30,8 @@
     "build": "node \"../../node_modules/typescript/bin/tsc\""
   },
   "dependencies": {
-    "@comunica/core": "^3.2.1",
-    "@comunica/types": "^3.2.1",
+    "@comunica/core": "^3.2.300",
+    "@comunica/types": "^3.2.300",
     "@rdfjs/types": "1.1.0",
     "immutable": "^4.1.0",
     "rdf-data-factory": "^1.1.1",
