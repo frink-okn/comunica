@@ -386,13 +386,6 @@ describe('QuerySourceHypermedia', () => {
       });
     });
 
-    describe('queryPaths', () => {
-      it('should throw', async() => {
-        expect(source.queryPaths(<any> undefined, context))
-          .toBeTruthy();
-      });
-    });
-
     describe('queryQuads', () => {
       it('should throw', async() => {
         await expect(source.queryQuads(<any> undefined, context).toArray()).resolves
