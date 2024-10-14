@@ -575,6 +575,13 @@ describe('QuerySourceRdfJs', () => {
     });
   });
 
+  describe('queryPaths', () => {
+    it('should throw', () => {
+      expect(() => source.queryPaths(<any> undefined, ctx))
+        .toThrow(`queryPaths is not implemented in QuerySourceQpf`);
+    });
+  });
+
   describe('queryQuads', () => {
     it('should throw', () => {
       expect(() => source.queryQuads(<any> undefined, ctx))
