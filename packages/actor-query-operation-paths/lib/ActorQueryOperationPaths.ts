@@ -22,7 +22,7 @@ import { Factory, type Algebra } from 'sparqlalgebrajs';
 import type { Operation } from 'sparqlalgebrajs/lib/algebra';
 
 /**
- * A [Query Operation](https://github.com/comunica/comunica/tree/master/packages/bus-query-operation) actor that handles SPARQL paths operations.
+ * A [Query Operation](https://github.com/comunica/comunica/tree/master/packages/bus-query-operation) actor that handles SPARQL PATHS operations.
  */
 export class ActorQueryOperationPaths extends ActorQueryOperationTypedMediated<Algebra.Paths> {
   private readonly mediatorOptimizeQueryOperation: MediatorOptimizeQueryOperation;
