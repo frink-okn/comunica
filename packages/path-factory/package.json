@@ -1,0 +1,40 @@
+{
+  "name": "@comunica/path-factory",
+  "version": "3.2.300",
+  "description": "Path factory module for Comunica",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/comunica/comunica.git",
+    "directory": "packages/path-factory"
+  },
+  "bugs": {
+    "url": "https://github.com/comunica/comunica/issues"
+  },
+  "keywords": [
+    "comunica",
+    "types"
+  ],
+  "sideEffects": false,
+  "main": "lib/index.js",
+  "typings": "lib/index",
+  "publishConfig": {
+    "access": "public"
+  },
+  "files": [
+    "components",
+    "lib/**/*.d.ts",
+    "lib/**/*.js",
+    "lib/**/*.js.map"
+  ],
+  "scripts": {
+    "build": "node \"../../node_modules/typescript/bin/tsc\""
+  },
+  "dependencies": {
+    "@comunica/core": "^3.2.300",
+    "@comunica/types": "^3.2.300",
+    "@rdfjs/types": "1.1.0",
+    "immutable": "^4.1.0",
+    "rdf-data-factory": "^1.1.1",
+    "rdf-string": "^1.6.1"
+  }
+}

@@ -452,6 +452,7 @@ export class ActorOptimizeQueryOperationFilterPushdown extends ActorOptimizeQuer
         // Don't push down in all other cases
         return [ false, factory.createFilter(operation, expression) ];
       }
+      case Algebra.types.PATHS:
       case Algebra.types.MINUS:
       case Algebra.types.ALT:
       case Algebra.types.ASK:

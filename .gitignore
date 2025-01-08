@@ -4,6 +4,7 @@ node_modules
 .rdf-test-suite-ldf-cache
 .idea
 .vscode
+.yalc
 .yarn
 lerna-debug.log
 yarn-error.log
