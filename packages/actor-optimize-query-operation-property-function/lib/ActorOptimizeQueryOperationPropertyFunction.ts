@@ -1,3 +1,5 @@
+/* eslint-disable capitalized-comments */
+
 import type { IActionOptimizeQueryOperation, IActorOptimizeQueryOperationOutput, IActorOptimizeQueryOperationArgs }
   from '@comunica/bus-optimize-query-operation';
 import { ActorOptimizeQueryOperation } from '@comunica/bus-optimize-query-operation';
@@ -24,7 +26,7 @@ export class ActorOptimizeQueryOperationPropertyFunction extends ActorOptimizeQu
   }
 
   public async test(_action: IActionOptimizeQueryOperation): Promise<TestResult<IActorTest>> {
-    return passTestVoid()
+    return passTestVoid();
   }
 
   public async run(action: IActionOptimizeQueryOperation): Promise<IActorOptimizeQueryOperationOutput> {
@@ -61,7 +63,7 @@ export class ActorOptimizeQueryOperationPropertyFunction extends ActorOptimizeQu
           pattern.metadata = { propfunc: encodedArgs };
         }
         keepPatterns.push(pattern);
-        //keepPatterns.push(factory.createPattern(labelPattern.subject, this.propertyFunctionPredicate, encodedArgs));
+        // keepPatterns.push(factory.createPattern(labelPattern.subject, this.propertyFunctionPredicate, encodedArgs));
         return factory.createBgp(keepPatterns);
       }
     }

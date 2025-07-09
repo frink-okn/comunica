@@ -37,6 +37,7 @@
     "build:components": "componentsjs-generator"
   },
   "dependencies": {
+    "@comunica/actor-optimize-query-operation-property-function": "^4.2.0",
     "@comunica/bus-merge-bindings-context": "^4.2.0",
     "@comunica/bus-optimize-query-operation": "^4.2.0",
     "@comunica/bus-query-source-identify": "^4.2.0",

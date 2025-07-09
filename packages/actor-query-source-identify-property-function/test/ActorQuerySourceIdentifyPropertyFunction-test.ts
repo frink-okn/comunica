@@ -15,12 +15,12 @@ describe('ActorQuerySourceIdentifyPropertyFunction', () => {
       actor = new ActorQuerySourceIdentifyPropertyFunction({ name: 'actor', bus });
     });
 
-    it('should test', () => {
-      return expect(actor.test({ todo: true })).resolves.toEqual({ todo: true }); // TODO
+    it('should test', async() => {
+      await expect(actor.test({ todo: true })).resolves.toEqual({ todo: true }); // TODO
     });
 
-    it('should run', () => {
-      return expect(actor.run({ todo: true })).resolves.toMatchObject({ todo: true }); // TODO
+    it('should run', async() => {
+      await expect(actor.run({ todo: true })).resolves.toMatchObject({ todo: true }); // TODO
     });
   });
 });

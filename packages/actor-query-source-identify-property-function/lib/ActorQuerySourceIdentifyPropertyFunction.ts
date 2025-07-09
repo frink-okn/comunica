@@ -1,7 +1,11 @@
-import { ActorOptimizeQueryOperationPropertyFunction } 
+// FIXME: These rules are disabled while this is a WIP. They should be re-enabled when the code is more worked out.
+/* eslint-disable capitalized-comments */
+/* eslint-disable no-console */
+
+import { ActorOptimizeQueryOperationPropertyFunction }
   from '@comunica/actor-optimize-query-operation-property-function';
-import { BindingsFactory } from '@comunica/utils-bindings-factory';
 import type { MediatorMergeBindingsContext } from '@comunica/bus-merge-bindings-context';
+import type { MediatorOptimizeQueryOperation } from '@comunica/bus-optimize-query-operation';
 import type { MediatorQueryOperation } from '@comunica/bus-query-operation';
 import type {
   IActionQuerySourceIdentify,
@@ -11,7 +15,6 @@ import type {
   from '@comunica/bus-query-source-identify';
 import { ActorQuerySourceIdentify } from '@comunica/bus-query-source-identify';
 import { passTestVoid, type IActorTest, type TestResult } from '@comunica/core';
-import { MetadataValidationState } from '@comunica/utils-metadata';
 import type {
   IActionContext,
   BindingsStream,
@@ -23,14 +26,15 @@ import type {
   QueryResultCardinality,
   IQueryOperationResult,
 } from '@comunica/types';
+import { BindingsFactory } from '@comunica/utils-bindings-factory';
+import { MetadataValidationState } from '@comunica/utils-metadata';
 import type * as RDF from '@rdfjs/types';
 import type { AsyncIterator } from 'asynciterator';
 import { ArrayIterator, EmptyIterator, SingletonIterator, wrap } from 'asynciterator';
 import type { Literal, NamedNode, Variable } from 'rdf-data-factory';
 import { DataFactory } from 'rdf-data-factory';
 import { Factory } from 'sparqlalgebrajs';
-import type { Operation, Ask, Update, Alt } from 'sparqlalgebrajs/lib/algebra';
-import { MediatorOptimizeQueryOperation } from '@comunica/bus-optimize-query-operation';
+import type { Operation, Ask, Update } from 'sparqlalgebrajs/lib/algebra';
 
 const AF = new Factory();
 const DF = new DataFactory<RDF.BaseQuad>();
@@ -148,14 +152,14 @@ export class QuerySourcePropertyFunction implements IQuerySource {
       const handler = this.queryHandlers[operation.object.value];
       if (handler) {
         if (operation.subject.termType === 'Variable') {
-          //console.log('SUBJECT IS A VARIABLE');
+          // console.log('SUBJECT IS A VARIABLE');
           // Number.POSITIVE_INFINITY or Infinity don't seem to work to force the subject to be bound
           cardinality = { type: 'estimate', value: Number.MAX_SAFE_INTEGER };
-          //cardinality = { type: 'exact', value: 1000 };
+          // cardinality = { type: 'exact', value: 1000 };
           it = new EmptyIterator<Bindings>();
           variables = [ operation.subject, handler.getOutVariable() ];
         } else {
-          //console.log('SUBJECT IS NOT A VARIABLE');
+          // console.log('SUBJECT IS NOT A VARIABLE');
           return handler.queryBindings(
             operation,
             context,
@@ -203,14 +207,12 @@ export class QuerySourcePropertyFunction implements IQuerySource {
   }
 
   private isVar(term: any): term is Variable {
-    const variable = term as Variable;
+    const variable = <Variable>term;
     return variable.termType !== undefined && variable.termType === 'Variable' && variable.value !== undefined;
   }
 }
 
 class AutoLabel {
-  private readonly DF = new DataFactory();
-  private readonly AF = new Factory(this.DF);
   private readonly label = DF.namedNode('http://www.w3.org/2000/01/rdf-schema#label');
   private readonly foafName = DF.namedNode('http://xmlns.com/foaf/0.1/name');
   private readonly sdoName = DF.namedNode('http://schema.org/name');
@@ -307,22 +309,25 @@ class AutoLabel {
         .then((result: IQueryOperationResult) => {
           if (result.type === 'bindings') {
             return result.bindingsStream.toArray().then((allBindings: Bindings[]) => {
-              //console.log(`All bindings: ${allBindings.length}`);
+              // console.log(`All bindings: ${allBindings.length}`);
               for (const arg of this.allArguments) {
-                //console.log(`ARG: ${arg.value}`);
+                // console.log(`ARG: ${arg.value}`);
                 if (arg.termType === 'NamedNode') {
                   const matchedBindings = allBindings.filter(binding =>
                     binding.get(this.propertyVar)?.value === arg.value);
                   for (const lang of this.languages) {
                     const goodBindings = matchedBindings.filter((binding) => {
                       const value = binding.get(this.labelVar);
+                      // FIXME
                       // return this.isLiteral(value) && langMatches(value.language, lang);
-                      return this.isLiteral(value) && value.language === lang; // FIXME
+                      return this.isLiteral(value) && value.language === lang;
                     });
                     goodBindings.sort((a, b) =>
                       (a.get(this.labelVar)?.value ?? '').localeCompare(b.get(this.labelVar)?.value ?? ''));
                     if (goodBindings.length > 0) {
-                      //console.log(`returning ${JSON.stringify(goodBindings[0].filter((v, k) => k.value !== this.propertyVar.value))}`);
+                      // console.log(`returning ${JSON.stringify(
+                      //   goodBindings[0].filter((v, k) => k.value !== this.propertyVar.value)
+                      // )}`);
                       return new SingletonIterator(
                         goodBindings[0].filter((v, k) => k.value !== this.propertyVar.value),
                       );
@@ -331,18 +336,19 @@ class AutoLabel {
                 } else {
                   const matchedBindings = allBindings.filter((binding) => {
                     const value = binding.get(this.labelVar);
+                    // FIXME
                     // console.log(value?.value);
                     // console.log((value as Literal).language);
                     // return this.isLiteral(value) && langMatches(value.language, arg.value);
-                    return this.isLiteral(value) && value.language === arg.value; // FIXME
+                    return this.isLiteral(value) && value.language === arg.value;
                   });
-                 // console.log(`Matched bindings: ${matchedBindings.length}`);
+                  // console.log(`Matched bindings: ${matchedBindings.length}`);
                   for (const property of this.properties) {
                     const goodBindings = matchedBindings.filter((binding) => {
                       const prop = binding.get(this.propertyVar);
                       return this.isNamedNode(prop) && prop.value === property.value;
                     });
-                   // console.log(`Good bindings: ${goodBindings.length}`);
+                    // console.log(`Good bindings: ${goodBindings.length}`);
                     goodBindings.sort((a, b) =>
                       (a.get(this.labelVar)?.value ?? '').localeCompare(b.get(this.labelVar)?.value ?? ''));
                     if (goodBindings.length > 0) {
@@ -357,7 +363,9 @@ class AutoLabel {
               allBindings.sort((a, b) =>
                 (a.get(this.labelVar)?.value ?? '').localeCompare(b.get(this.labelVar)?.value ?? ''));
               if (allBindings.length > 0) {
-                //console.log(`returning ${JSON.stringify(allBindings[0].filter((v, k) => k.value !== this.propertyVar.value))}`);
+                // console.log(`returning ${JSON.stringify(
+                //   allBindings[0].filter((v, k) => k.value !== this.propertyVar.value)
+                // )}`);
                 return new SingletonIterator(allBindings[0].filter((v, k) => k.value !== this.propertyVar.value));
               }
               return new EmptyIterator<Bindings>();
@@ -370,17 +378,17 @@ class AutoLabel {
   }
 
   private isVar(term: any): term is Variable {
-    const variable = term as Variable;
+    const variable = <Variable>term;
     return variable.termType !== undefined && variable.termType === 'Variable' && variable.value !== undefined;
   }
 
   private isLiteral(term: any): term is Literal {
-    const literal = term as Literal;
+    const literal = <Literal>term;
     return literal.termType !== undefined && literal.termType === 'Literal' && literal.value !== undefined;
   }
 
   private isNamedNode(term: any): term is NamedNode {
-    const node = term as NamedNode;
+    const node = <NamedNode>term;
     return node.termType !== undefined && node.termType === 'NamedNode' && node.value !== undefined;
   }
 }
