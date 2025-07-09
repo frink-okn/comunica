@@ -1,6 +1,6 @@
 import { ActorOptimizeQueryOperationPropertyFunction } 
   from '@comunica/actor-optimize-query-operation-property-function';
-import { BindingsFactory } from '@comunica/bindings-factory';
+import { BindingsFactory } from '@comunica/utils-bindings-factory';
 import type { MediatorMergeBindingsContext } from '@comunica/bus-merge-bindings-context';
 import type { MediatorQueryOperation } from '@comunica/bus-query-operation';
 import type {
@@ -10,8 +10,8 @@ import type {
   MediatorQuerySourceIdentify }
   from '@comunica/bus-query-source-identify';
 import { ActorQuerySourceIdentify } from '@comunica/bus-query-source-identify';
-import type { IActorTest } from '@comunica/core';
-import { MetadataValidationState } from '@comunica/metadata';
+import { passTestVoid, type IActorTest, type TestResult } from '@comunica/core';
+import { MetadataValidationState } from '@comunica/utils-metadata';
 import type {
   IActionContext,
   BindingsStream,
@@ -31,7 +31,6 @@ import { DataFactory } from 'rdf-data-factory';
 import { Factory } from 'sparqlalgebrajs';
 import type { Operation, Ask, Update, Alt } from 'sparqlalgebrajs/lib/algebra';
 import { MediatorOptimizeQueryOperation } from '@comunica/bus-optimize-query-operation';
-import { langMatches } from '@comunica/expression-evaluator/lib/functions/XPathFunctions';
 
 const AF = new Factory();
 const DF = new DataFactory<RDF.BaseQuad>();
@@ -48,19 +47,19 @@ export class ActorQuerySourceIdentifyPropertyFunction extends ActorQuerySourceId
     super(args);
   }
 
-  public async test(action: IActionQuerySourceIdentify): Promise<IActorTest> {
+  public async test(action: IActionQuerySourceIdentify): Promise<TestResult<IActorTest>> {
     const source = action.querySourceUnidentified;
     if (source.type !== undefined && source.type !== 'property') {
       throw new Error(`${this.name} requires a single query source with property type to be present in the context.`);
     }
     // Why throw error above instead of returning false here?
-    return true;
+    return passTestVoid();
   }
 
   public async run(action: IActionQuerySourceIdentify): Promise<IActorQuerySourceIdentifyOutput> {
     return { querySource: {
       source: new QuerySourcePropertyFunction(
-        await BindingsFactory.create(this.mediatorMergeBindingsContext, action.context),
+        await BindingsFactory.create(this.mediatorMergeBindingsContext, action.context, new DataFactory()),
         this.mediatorQueryOperation,
         this.mediatorOptimizeQueryOperation,
         this.mediatorQuerySourceIdentify,
@@ -317,7 +316,8 @@ class AutoLabel {
                   for (const lang of this.languages) {
                     const goodBindings = matchedBindings.filter((binding) => {
                       const value = binding.get(this.labelVar);
-                      return this.isLiteral(value) && langMatches(value.language, lang);
+                      // return this.isLiteral(value) && langMatches(value.language, lang);
+                      return this.isLiteral(value) && value.language === lang; // FIXME
                     });
                     goodBindings.sort((a, b) =>
                       (a.get(this.labelVar)?.value ?? '').localeCompare(b.get(this.labelVar)?.value ?? ''));
@@ -333,7 +333,8 @@ class AutoLabel {
                     const value = binding.get(this.labelVar);
                     // console.log(value?.value);
                     // console.log((value as Literal).language);
-                    return this.isLiteral(value) && langMatches(value.language, arg.value);
+                    // return this.isLiteral(value) && langMatches(value.language, arg.value);
+                    return this.isLiteral(value) && value.language === arg.value; // FIXME
                   });
                  // console.log(`Matched bindings: ${matchedBindings.length}`);
                   for (const property of this.properties) {
